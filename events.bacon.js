@@ -1,5 +1,12 @@
 bacon._eventData = [];
 
+/**
+ * Adds an event handler for the specified event. Cross-browser compatible.
+ *
+ * @param string event The event name.
+ * @param function callback The function to be called. You can use "this" in
+ * 	every browser to access the element.
+ */
 bacon.html.on = function(event, callback) {
 	this.each(function() {
 		if (this.addEventListener) {
@@ -32,6 +39,12 @@ bacon.html.on = function(event, callback) {
 	return this;
 }
 
+/**
+ * Triggers an event handler for the specified event.
+ *
+ * @param string event The event name to be triggered.
+ * @param function callback The function to be called on completion.
+ */
 bacon.html.trigger = function(event, callback) {
 	this.each(function() {
 		if (this.dispatchEvent) {
@@ -49,6 +62,12 @@ bacon.html.trigger = function(event, callback) {
 	return this;
 }
 
+/**
+ * Removes the specified handler / all handlers of that type for that element.
+ *
+ * @param string event The event name.
+ * @param function callback The function specified in .on. Optional.
+ */
 bacon.html.removeHandlers = bacon.html.off = function(event, callback) {
 	this.each(function() {
 		if (this.dataset.baconId) {
