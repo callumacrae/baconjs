@@ -6,24 +6,34 @@ bacon._eventData = [];
  * @param string event The event name.
  * @param function callback The function to be called. You can use "this" in
  * 	every browser to access the element.
+ * @param bool one Only trigger once? It is recommended that you use .one.
  */
-bacon.html.on = function(event, callback) {
+bacon.html.on = function(event, callback, one) {
 	this.each(function() {
 		if (this.addEventListener) {
-			function handler(e) {
+			var handler = function(e) {
 				if (callback.call(this, e) === false) {
 					e.stopPropagation();
 					e.preventDefault();
 				}
+				
+				if (handler.one) {
+					bacon.html.removeHandlers.call(this, event, callback);
+				}
 			};
+			handler.one = (typeof one !== 'undefined');
 			handler.callback = callback;
 			this.addEventListener(event, handler);
 		} else {
 			// Internet Explorer support
-			function handler(e) {
-				if (callback.call(e.srcElement, e) === false) {
+			var that = this, handler = function(e) {
+				if (callback.call(that, e) === false) {
 					e.stopPropagation();
 					e.preventDefault();
+				}
+				
+				if (handler.one) {
+					bacon.html.removeHandlers.call(that, event, callback);
 				}
 			};
 			handler.callback = callback;
@@ -38,6 +48,17 @@ bacon.html.on = function(event, callback) {
 	});
 	return this;
 };
+
+/**
+ * Adds an event handler for the specified event which will be executed only
+ * once and then removed.
+ *
+ * @param string event The event name.
+ * @param function callback The function to be called.
+ */
+bacon.html.one = function(event, callback) {
+	return bacon.html.on.call(this, event, callback, true);
+}
 
 /**
  * Triggers an event handler for the specified event.
