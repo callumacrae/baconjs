@@ -7,6 +7,26 @@ bacon.html.on = function(event, callback) {
 					e.preventDefault();
 				}
 			});
+		} else {
+			// IE
 		}
 	});
+	return this;
+}
+
+bacon.html.trigger = function(event, callback) {
+	this.each(function() {
+		if (this.dispatchEvent) {
+			var evt = document.createEvent('UIEvents');
+			evt.initUIEvent(event, true, true, window, 1);
+			var cancelled = !this.dispatchEvent(evt);
+			
+			if (typeof callback === 'function') {
+				callback.call(this, cancelled);
+			}
+		} else {
+			// IE
+		}
+	});
+	return this;
 }
