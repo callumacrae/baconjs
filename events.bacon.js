@@ -3,7 +3,7 @@ bacon._eventData = [];
 bacon.html.on = function(event, callback) {
 	this.each(function() {
 		if (this.addEventListener) {
-			var handler = function(e) {
+			function handler(e) {
 				if (callback.call(this, e) === false) {
 					e.stopPropagation();
 					e.preventDefault();
@@ -11,14 +11,22 @@ bacon.html.on = function(event, callback) {
 			};
 			handler.callback = callback;
 			this.addEventListener(event, handler);
-			
-			if (!this.dataset.baconId) {
-				this.dataset.baconId = bacon._eventData.push([['click', handler]]) - 1;
-			} else {
-				bacon._eventData[this.dataset.baconId].push(['click', handler]);
-			}
 		} else {
-			// IE
+			// Internet Explorer support
+			function handler(e) {
+				if (callback.call(e.srcElement, e) === false) {
+					e.stopPropagation();
+					e.preventDefault();
+				}
+			};
+			handler.callback = callback;
+			this.attachEvent('on' + event, handler);
+		}
+			
+		if (!this.dataset.baconId) {
+			this.dataset.baconId = bacon._eventData.push([[event, handler]]) - 1;
+		} else {
+			bacon._eventData[this.dataset.baconId].push([event, handler]);
 		}
 	});
 	return this;
@@ -50,7 +58,8 @@ bacon.html.removeHandlers = bacon.html.off = function(event, callback) {
 					if (this.removeEventListener) {
 						this.removeEventListener(data[i][0], data[i][1]);
 					} else {
-						// IE
+						// Internet Explorer support
+						this.detachEvent('on' + data[i][0], data[i][1]);
 					}
 				}
 			}
