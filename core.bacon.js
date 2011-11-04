@@ -13,32 +13,12 @@ var $, bacon = $ = function(selector) {
 BaconObj.prototype = bacon.html = {};
 
 bacon.html.select = function(selector) {
-	if (typeof selector === 'string') {
-		selector = selector.split(' ');
-	}
-	var elements;
-	switch (selector[0].charAt(0)) {
-		case '.':
-			// It is a class
-			elements = this.elements[0].getElementsByClassName(selector[0].slice(1));
-			break;
-		
-		case '#':
-			// It is an ID
-			elements = this.elements[0].getElementById(selector[0].slice(1));
-			if (elements !== null) {
-				elements = [elements];
-			}
-			break;
-		
-		default:
-			// It is probably a tag name
-			elements = this.elements[0].getElementsByTagName(selector[0]);
-			break;
+	for (var els, elements = [], i = 0, j; i < this.elements.length; i++) {
+		els = this.elements[i].querySelectorAll(selector);
+		for (j = 0; j < els.length; j++) {
+			elements.push(els[j]);
+		}
 	}
 	this.elements = elements;
-	if (elements === null) {
-		return null;
-	}
 	return this;
 }
