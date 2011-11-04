@@ -9,4 +9,4 @@ bacon.html.each = function(callback) {
 		callback.call(this.elements[i]);
 	}
 	return this;
-}
+};

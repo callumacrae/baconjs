@@ -27,4 +27,4 @@ bacon.html.select = function(selector, limit) {
 	}
 	this.elements = elements;
 	return this;
-}
+};

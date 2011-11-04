@@ -37,7 +37,7 @@ bacon.html.on = function(event, callback) {
 		}
 	});
 	return this;
-}
+};
 
 /**
  * Triggers an event handler for the specified event.
@@ -60,7 +60,7 @@ bacon.html.trigger = function(event, callback) {
 		}
 	});
 	return this;
-}
+};
 
 /**
  * Removes the specified handler / all handlers of that type for that element.
@@ -85,4 +85,4 @@ bacon.html.removeHandlers = bacon.html.off = function(event, callback) {
 		}
 	});
 	return this;
-}
+};
