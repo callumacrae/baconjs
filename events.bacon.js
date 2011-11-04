@@ -38,7 +38,7 @@ bacon.html.trigger = function(event, callback) {
 			var evt = document.createEvent('UIEvents');
 			evt.initUIEvent(event, true, true, window, 1);
 			var cancelled = !this.dispatchEvent(evt);
-			
+
 			if (typeof callback === 'function') {
 				callback.call(this, cancelled);
 			}

@@ -8,7 +8,7 @@ var $, bacon = $ = function(selector, limit) {
 		elements.elements = [document];
 		elements.select(selector, limit);
 	}
-	return (elements.elements === null ) ? null : elements;
+	return (elements.elements === null) ? null : elements;
 };
 BaconObj.prototype = bacon.html = {};
 
