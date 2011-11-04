@@ -75,7 +75,7 @@ bacon.html.on = function(event, callback, one) {
 				}
 				
 				if (handler.one) {
-					bacon.html.removeHandlers.call(this, event, callback);
+					bacon.html.removeHandlers.call($(this), event, callback);
 				}
 			};
 			handler.one = (typeof one !== 'undefined');
@@ -90,7 +90,7 @@ bacon.html.on = function(event, callback, one) {
 				}
 				
 				if (handler.one) {
-					bacon.html.removeHandlers.call(that, event, callback);
+					bacon.html.removeHandlers.call($(that), event, callback);
 				}
 			};
 			handler.callback = callback;
