@@ -69,6 +69,10 @@ BaconTest.prototype._compare = function(input, value) {
 	if (typeof value === 'string' || typeof value === 'number' || typeof value === 'boolean') {
 		return (input == value);
 	} else if (value instanceof Array && input instanceof Array) {
+		if (value.length !== input.length) {
+			return false;
+		}
+
 		for (var i = 0; i < value.length; i++) {
 			if (!BaconTest.prototype._compare(input[i], value[i])) {
 				return false;
