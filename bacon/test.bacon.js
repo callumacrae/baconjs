@@ -127,6 +127,6 @@ BaconTest.prototype.toNotMatch = function(value) {
 		value = new RegExp(value);
 	}
 	
-	value = value.test(this.input) ? 'Expected ' + this.input + ' to match ' + value + '.' : true;
+	value = value.test(this.input) ? 'Expected ' + this.input + ' to not match ' + value + '.' : true;
 	bacon._currentTest.push(value);
 }
