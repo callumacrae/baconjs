@@ -60,5 +60,22 @@ $.describe('bacon DOM tests', function() {
 	$.it('should use .get correctly', function() {
 		$.expect($('.thediv').get(0).elements[0]).toBe($('.thediv').elements[0]);
 		$.expect($('.thediv').get(1).elements[0]).toBe($('.thediv').elements[1]);
-	})
+	});
+	
+	$.it('should append from HTMLElement properly', function() {
+		var div = document.createElement('div');
+		div.innerHTML = 'test';
+		$('.thediv').append(div);
+		$.expect($('.thediv div').length).toEqual(1);
+	});
+	
+	$.it('should append from BaconObj properly', function() {
+		$('.thediv').append($('h1'));
+		$.expect($('.thediv h1').length).toEqual(1);
+	});
+	
+	$.it('should append from HTML string correctly', function() {
+		$('.thediv').append('<i>test</i>');
+		$.expect($('.thediv i').length).toEqual(1);
+	});
 });
