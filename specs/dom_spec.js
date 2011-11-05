@@ -17,7 +17,15 @@ $.describe('bacon DOM tests', function() {
 		$.expect($(document).select('p').select('a').length).toEqual(2);
 	});
 	
-	$.it('should use .each correctly', function() {
-		//needs async
-	});
+	$.it('should use .each correctly', function(done) {
+		var total = 0;
+		$('p').each(function() {
+			$.expect(this.tagName).toEqual('P');
+			total++;
+		});
+		setTimeout(function() {
+			$.expect(total).toEqual(4);
+			done();
+		}, 1);
+	}, true);
 });
