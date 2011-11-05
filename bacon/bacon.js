@@ -112,6 +112,7 @@ bacon.html.parent = function(selector) {
 	}
 	return $(parent);
 };
+
 /**
  * Returns the siblings of the current element (optionally matching a specified
  * selector). If the current object holds more than one element, only the first
@@ -131,6 +132,16 @@ bacon.html.siblings = function(selector) {
 		}
 	}
 	return siblings;
+}
+
+/**
+ * Gets the specified element from the list.
+ *
+ * @param int number The number of the element (starts from zero).
+ * @returns BaconObj The element.
+ */
+bacon.html.get = function(number) {
+	return $(this.elements[number]);
 }
 
 

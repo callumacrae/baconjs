@@ -56,4 +56,9 @@ $.describe('bacon DOM tests', function() {
 		$.expect($('.thediv p').siblings('p').length).toEqual(2);
 		$.expect($('.thediv p').siblings('span').length).toEqual(1);
 	});
+	
+	$.it('should use .get correctly', function() {
+		$.expect($('.thediv').get(0).elements[0]).toBe($('.thediv').elements[0]);
+		$.expect($('.thediv').get(1).elements[0]).toBe($('.thediv').elements[1]);
+	})
 });
