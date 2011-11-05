@@ -64,12 +64,12 @@ function BaconTest(input) {
 	this.input = input;
 }
 
-BaconTest.prototype.toEqual = function(value) {
-	value = (this.input === value) ? true : 'Expected ' + value + ' to equal ' + this.input + '.';
+BaconTest.prototype.toBe = function(value) {
+	value = (this.input === value) ? true : 'Expected ' + value + ' to be ' + this.input + '.';
 	bacon._currentTest.push(value);
 }
 
-BaconTest.prototype.toNotEqual = function(value) {
-	value = (this.input === value) ? 'Expected ' + value + ' to not equal ' + this.input + '.' : true;
+BaconTest.prototype.toNotBe = function(value) {
+	value = (this.input === value) ? 'Expected ' + value + ' to not be ' + this.input + '.' : true;
 	bacon._currentTest.push(value);
 }
