@@ -213,12 +213,7 @@ bacon.html.prepend = function(html) {
  * @param bool prepend If true, will be prepended instead of appended.
  */
 bacon.html.moveTo = function(selector, prepend) {
-	if (typeof selector === 'string') {
-		var to = $(selector, 1);
-	} else {
-		var to = selector;
-	}
-	
+	var to = (typeof selector === 'string') ? $(selector, 1) : selector;
 	if (typeof prepend === 'undefined' || !prepend) {
 		to.elements[0].appendChild(this.elements[0]);
 	} else {
@@ -233,12 +228,7 @@ bacon.html.moveTo = function(selector, prepend) {
  * @param bool prepend If true, will be prepended instead of appended.
  */
 bacon.html.copyTo = function(selector, prepend) {
-	if (typeof selector === 'string') {
-		var to = $(selector, 1);
-	} else {
-		var to = selector;
-	}
-	
+	var to = (typeof selector === 'string') ? $(selector, 1) : selector;
 	if (typeof prepend === 'undefined' || !prepend) {
 		to.append(this);
 	} else {
