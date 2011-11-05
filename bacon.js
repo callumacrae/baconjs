@@ -85,7 +85,9 @@ bacon.html.on = function(event, callback, one) {
 			// Internet Explorer support
 			this.attachEvent('on' + event, handler);
 		}
-			
+
+		// The dataset object is the data attributes - this.dataset.thisThing
+		// would be data-this-thing.
 		if (!this.dataset.baconId) {
 			this.dataset.baconId = bacon._eventData.push([[event, handler]]) - 1;
 		} else {
@@ -115,6 +117,7 @@ bacon.html.one = function(event, callback) {
 bacon.html.trigger = function(event, callback) {
 	this.each(function() {
 		if (this.dispatchEvent) {
+			// Create and dispatch the event
 			var evt = document.createEvent('UIEvents');
 			evt.initUIEvent(event, true, true, window, 1);
 			var cancelled = !this.dispatchEvent(evt);
