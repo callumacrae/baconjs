@@ -51,6 +51,36 @@ bacon.html.each = function(callback) {
 	return this;
 };
 
+/**
+ * Returns the next DOM element (optionally matching a specified selector).
+ * If the current object holds more than one element, only the first will be used.
+ *
+ * @param string selector The selector to be used.
+ * @returns BaconObj The next element.
+ */
+bacon.html.next = function(selector) {
+	var next = this.elements[0].nextSibling;
+	while (next && next.nodeType !== 1 || (typeof selector !== 'undefined' && !next.matchesSelector(selector))) {
+		next = next.nextSibling;
+	}
+	return $(next);
+};
+
+/**
+ * Returns the previous DOM element (optionally matching a specified selector).
+ * If the current object holds more than one element, only the first will be used.
+ *
+ * @param string selector The selector to be used.
+ * @returns BaconObj The next element.
+ */
+bacon.html.previous = function(selector) {
+	var previous = this.elements[0].previousSibling;
+	while (previous && previous.nodeType !== 1 || (typeof selector !== 'undefined' && !previous.matchesSelector(selector))) {
+		previous = previous.previousSibling;
+	}
+	return $(previous);
+};
+
 
 
 /*****************************************************************************
@@ -158,3 +188,28 @@ bacon.html.removeHandlers = bacon.html.off = function(event, callback) {
 	});
 	return this;
 };
+
+
+
+/*****************************************************************************
+ *                                  OLD BROWSERS
+ ****************************************************************************/
+
+
+if (!HTMLElement.prototype.matchesSelector) {
+	HTMLElement.prototype.matchesSelector = function(selector) {
+		if (HTMLElement.prototype.webkitMatchesSelector) {
+			return this.webkitMatchesSelector(selector);
+		} else if (HTMLElement.prototype.mozMatchesSelector) {
+			return this.mozMatchesSelector(selector);
+		}
+		var possibles = this.parentNode.querySelectorAll(selector);
+		for (var i = 0; i < possibles.length; i++) {
+			if (possibles[i] === this) {
+				return true;
+			}
+		}
+		return false;
+	};
+}
+

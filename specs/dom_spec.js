@@ -28,4 +28,14 @@ $.describe('bacon DOM tests', function() {
 			done();
 		}, 1);
 	}, true);
+	
+	$.it('should use .next correctly', function() {
+		$.expect($('#test').next().elements[0]).toBe($('h2').elements[0]);
+		$.expect($('#test').next('div').elements[0]).toBe($('div').elements[1]);
+	});
+	
+	$.it('should use .previous correctly', function() {
+		$.expect($('h2').previous().elements[0]).toBe($('#test').elements[0]);
+		$.expect($('h2').previous('h1').elements[0]).toBe($('h1').elements[0]);
+	});
 });
