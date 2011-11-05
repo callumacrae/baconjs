@@ -108,7 +108,7 @@ bacon.html.on = function(event, callback, one) {
  */
 bacon.html.one = function(event, callback) {
 	return bacon.html.on.call(this, event, callback, true);
-}
+};
 
 /**
  * Triggers an event handler for the specified event.

@@ -3,18 +3,18 @@ bacon._asyncTestTimeout = 400;
 
 bacon.describe = function(desc, fn) {
 	bacon._testData.push([desc, fn]);
-}
+};
 
 bacon.it = function(desc, fn, async) {
 	if (typeof async === 'undefined') {
 		async = false;
 	}
 	bacon._currentTestData.push([desc, fn, async]);
-}
+};
 
 bacon.expect = function(input) {
 	return new BaconTest(input);
-}
+};
 
 bacon.runTests = function(output_div) {
 	bacon._testResults = [];
@@ -97,7 +97,7 @@ bacon.runTests = function(output_div) {
 			});
 		}, 1);
 	}, 1);
-}
+};
 
 function BaconTest(input) {
 	this.input = input;
@@ -128,29 +128,29 @@ BaconTest.prototype._compare = function(input, value) {
 		return true;
 	}
 	return false;
-}
+};
 
 BaconTest.prototype.toEqual = function(value) {
 	value = BaconTest.prototype._compare(this.input, value);
 	value = value ? true : 'Expected ' + value + ' to equal ' + this.input;
 	bacon._currentTest.push(value);
-}
+};
 
 BaconTest.prototype.toNotEqual = function(value) {
 	value = !BaconTest.prototype._compare(this.input, value);
 	value = value ? true : 'Expected ' + value + ' to not equal ' + this.input;
 	bacon._currentTest.push(value);
-}
+};
 
 BaconTest.prototype.toBe = function(value) {
 	value = (this.input === value) ? true : 'Expected ' + value + ' to be ' + this.input + '.';
 	bacon._currentTest.push(value);
-}
+};
 
 BaconTest.prototype.toNotBe = function(value) {
 	value = (this.input === value) ? 'Expected ' + value + ' to not be ' + this.input + '.' : true;
 	bacon._currentTest.push(value);
-}
+};
 
 BaconTest.prototype.toMatch = function(value) {
 	if (!(value instanceof RegExp)) {
@@ -159,7 +159,7 @@ BaconTest.prototype.toMatch = function(value) {
 	
 	value = value.test(this.input) ? true : 'Expected ' + this.input + ' to match ' + value + '.';
 	bacon._currentTest.push(value);
-}
+};
 
 BaconTest.prototype.toNotMatch = function(value) {
 	if (!(value instanceof RegExp)) {
@@ -168,44 +168,44 @@ BaconTest.prototype.toNotMatch = function(value) {
 	
 	value = value.test(this.input) ? 'Expected ' + this.input + ' to not match ' + value + '.' : true;
 	bacon._currentTest.push(value);
-}
+};
 
 BaconTest.prototype.toContain = function(value) {
 	value = (this.input.indexOf(value) < 0) ? 'Expected ' + this.input + ' to contain ' + value + '.' : true;
 	bacon._currentTest.push(value);
-}
+};
 
 BaconTest.prototype.toNotContain = function(value) {
 	value = (this.input.indexOf(value) < 0) ? true : 'Expected ' + this.input + ' to not contain ' + value + '.';
 	bacon._currentTest.push(value);
-}
+};
 
 BaconTest.prototype.toBeLessThan = function(value) {
 	value = (this.input < value) ? true : 'Expected ' + this.input + ' to be less than ' + value + '.';
 	bacon._currentTest.push(value);
-}
+};
 
 BaconTest.prototype.toBeGreaterThan = function(value) {
 	value = (this.input > value) ? true : 'Expected ' + this.input + ' to be less than ' + value + '.';
 	bacon._currentTest.push(value);
-}
+};
 
 BaconTest.prototype.toBeDefined = function() {
 	bacon._currentTest.push((this.input === undefined) ? 'Expected var to be defined' : true);
-}
+};
 
 BaconTest.prototype.toBeUnDefined = function() {
 	bacon._currentTest.push((this.input === undefined) ? true : 'Expected var to be undefined');
-}
+};
 
 BaconTest.prototype.toBeNull = function() {
 	bacon._currentTest.push((this.input === null) ? true : 'Expected var to be null');
-}
+};
 
 BaconTest.prototype.toBeTruthy = function() {
 	bacon._currentTest.push((this.input) ? true : 'Expected ' + this.input + ' to be truthy');
-}
+};
 
 BaconTest.prototype.toBeFalsy = function() {
 	bacon._currentTest.push((this.input) ? 'Expected ' + this.input + ' to be falsy' : true);
-}
+};
