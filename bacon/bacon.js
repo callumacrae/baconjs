@@ -206,6 +206,46 @@ bacon.html.prepend = function(html) {
 	return this;
 }
 
+/**
+ * Moves the element to the element specified by the selector.
+ *
+ * @param string selector The element to move it to.
+ * @param bool prepend If true, will be prepended instead of appended.
+ */
+bacon.html.moveTo = function(selector, prepend) {
+	if (typeof selector === 'string') {
+		var to = $(selector, 1);
+	} else {
+		var to = selector;
+	}
+	
+	if (typeof prepend === 'undefined' || !prepend) {
+		to.elements[0].appendChild(this.elements[0]);
+	} else {
+		to.elements[0].insertBefore(this.elements[0], to.elements[0].childNodes[0])
+	}
+}
+
+/**
+ * Copies the element to the element specified by the selector.
+ *
+ * @param string selector The element to copy it to.
+ * @param bool prepend If true, will be prepended instead of appended.
+ */
+bacon.html.copyTo = function(selector, prepend) {
+	if (typeof selector === 'string') {
+		var to = $(selector, 1);
+	} else {
+		var to = selector;
+	}
+	
+	if (typeof prepend === 'undefined' || !prepend) {
+		to.append(this);
+	} else {
+		to.prepend(this);
+	}
+}
+
 
 
 /*****************************************************************************

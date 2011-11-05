@@ -95,4 +95,28 @@ $.describe('bacon DOM tests', function() {
 		$('.thediv').prepend('<strong>test</strong>');
 		$.expect($('.thediv strong').length).toEqual(4);
 	});
+	
+	$.it('should move elements successfully', function() {
+		$('strong', 1).moveTo($('#test', 1));
+		$.expect($('#test strong').length).toEqual(1);
+		$.expect($('#test').children().elements[1]).toBe($('strong').elements[0]);
+	});
+	
+	$.it('should move elements successfully with prepend', function() {
+		$('strong', 1).moveTo($('#test', 1), true);
+		$.expect($('#test strong').length).toEqual(1);
+		$.expect($('#test').children().elements[0]).toBe($('strong').elements[0]);
+	});
+	
+	$.it('should copy elements successfully', function() {
+		$('strong', 1).copyTo($('#test', 1));
+		$.expect($('#test strong').length).toEqual(2);
+		$.expect($('#test').children().elements[2].tagName).toEqual('STRONG');
+	});
+	
+	$.it('should copy elements successfully with prepend', function() {
+		$('strong', 1).copyTo($('span', 1), true);
+		$.expect($('span strong').length).toEqual(2);
+		$.expect($('span', 1).children().elements[0].tagName).toEqual('STRONG');
+	});
 });
