@@ -158,3 +158,7 @@ BaconTest.prototype.toBeDefined = function() {
 BaconTest.prototype.toBeUnDefined = function() {
 	bacon._currentTest.push((this.input === undefined) ? true : 'Expected var to be undefined');
 }
+
+BaconTest.prototype.toBeNull = function() {
+	bacon._currentTest.push((this.input === null) ? true : 'Expected var to be null');
+}
