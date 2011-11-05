@@ -145,32 +145,48 @@ bacon.html.get = function(number) {
 }
 
 /**
+ * Takes either an HTMLElement, BaconObj or HTML string and returns a
+ * BaconObj.
+ *
+ * @param object html HTMLElement / BaconObj / HTML string.
+ * @returns BaconObj.
+ */
+bacon._toBaconObj = function(html) {
+	if (html instanceof BaconObj) {
+		return html;
+	} else if (html instanceof  HTMLElement) {
+		var obj = new BaconObj();
+		obj.length = 1;
+		obj.elements = [html.cloneNode(true)];
+		return obj;
+	} else if (typeof html === 'string') {
+		var div = document.createElement('div');
+		div.innerHTML = html;
+		var children = $(div).children().elements;
+		var obj = new BaconObj();
+		obj.length = children.length;
+		obj.elements = [];
+		for (var i = 0; i < children.length; i++) {
+			obj.elements.push(children[i]);
+		}
+		return obj;
+	}
+	return false;
+}
+
+/**
  * Appends the provided node / BaconObj / HTML string to the current element(s).
  *
  * @param object html The HTMLElement / BaconObj / HTML string to append.
  */
 bacon.html.append = function(html) {
-	if (html instanceof HTMLElement) {
-		this.each(function() {
-			this.appendChild(html.cloneNode(true));
-		});
-	} else if (html instanceof BaconObj) {
-		var i;
-		this.each(function() {
-			for (i = 0; i < html.elements.length; i++) {
-				this.appendChild(html.elements[i].cloneNode(true));
-			}
-		});
-	} else if (typeof html === 'string') {
-		var div = document.createElement('div');
-		div.innerHTML = html;
-		var children = $(div).children().elements, i;
-		this.each(function() {
-			for (i = 0; i < children.length; i++) {
-				this.appendChild(children[i].cloneNode(true));
-			}
-		});
-	}
+	html = bacon._toBaconObj(html);
+	var i;
+	this.each(function() {
+		for (i = 0; i < html.elements.length; i++) {
+			this.appendChild(html.elements[i].cloneNode(true));
+		}
+	});
 	return this;
 }
 
@@ -180,27 +196,13 @@ bacon.html.append = function(html) {
  * @param object html The HTMLElement / BaconObj / HTML string to prepend.
  */
 bacon.html.prepend = function(html) {
-	if (html instanceof HTMLElement) {
-		this.each(function() {
-			this.insertBefore(html.cloneNode(true), this.childNodes[0]);
-		});
-	} else if (html instanceof BaconObj) {
-		var i;
-		this.each(function() {
-			for (i = 0; i < html.elements.length; i++) {
-				this.insertBefore(html.elements[i].cloneNode(true), this.childNodes[0]);
-			}
-		});
-	} else if (typeof html === 'string') {
-		var div = document.createElement('div');
-		div.innerHTML = html;
-		var children = $(div).children().elements, i;
-		this.each(function() {
-			for (i = 0; i < children.length; i++) {
-				this.insertBefore(children[i].cloneNode(true), this.childNodes[0]);
-			}
-		});
-	}
+	html = bacon._toBaconObj(html);
+	var i;
+	this.each(function() {
+		for (i = 0; i < html.elements.length; i++) {
+			this.insertBefore(html.elements[i].cloneNode(true), this.childNodes[0]);
+		}
+	});
 	return this;
 }
 
