@@ -93,6 +93,7 @@ bacon.html.on = function(event, callback, one) {
 					bacon.html.removeHandlers.call($(that), event, callback);
 				}
 			};
+			handler.one = (typeof one !== 'undefined');
 			handler.callback = callback;
 			this.attachEvent('on' + event, handler);
 		}
