@@ -1,0 +1,41 @@
+#bacontests {
+    border: 1px lightgrey solid;
+}
+
+#bacontests .testgroup {
+    border: 1px lightgrey solid;
+    padding: 0 10px;
+    margin: 10px;
+}
+
+#bacontests .testgroup h2 {
+	margin: 10px 0;
+    font-size: 18pt;
+    font-weight: bold;
+}
+
+#bacontests .testgroup .test {
+    border: 1px lightgrey solid;
+    padding: 10px;
+    margin: 10px 0;
+}
+
+#bacontests .testgroup .test.success {
+    background-color: #A9F5A9;
+}
+
+#bacontests .testgroup .test.failure {
+    background-color: #F78181;
+}
+
+#bacontests .testgroup .test p {
+	margin: 0;
+}
+
+#bacontests .testgroup .test strong:before {
+    content: "Error: ";
+}
+
+#bacontests .testgroup .test strong {
+   font-weight: bold;
+} 

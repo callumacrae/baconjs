@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>baconjs demo</title>
+	<link rel="stylesheet" href="test.bacon.css">
+	<meta charset="utf8">
+</head>
+<body>
+	<h1>baconjs demo</h1>
+	<div id="bacontests"></div>
+	<p>baconjs is a small JavaScript library. <a href="#">dead link</a></p>
+	<h2>Heading 2</h2>
+	<div>
+		<p>Paragraph in a div</p>
+		<p>Another paragraph</p>
+		<p>Woah <span style="color:red">red <strong>text!</strong></span> and <a href="#">another link</a></p>
+	</div>
+	<script src="bacon.js"></script>
+	<script src="test.bacon.js"></script>
+	<script src="spec.js"></script>
+	<script>$.runTests($('#bacontests'));</script>
+</body>
