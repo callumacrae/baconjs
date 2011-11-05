@@ -8,6 +8,10 @@ bacon.it = function(desc, fn) {
 	bacon._currentTestData.push([desc, fn]);
 }
 
+bacon.expect = function(input) {
+	return new BaconTest(input);
+}
+
 bacon.runTests = function(output_div) {
 	bacon._testResults = [];
 	for (var i = 0, j; i < bacon._testData.length; i++) {
@@ -54,10 +58,6 @@ bacon.runTests = function(output_div) {
 	html += '<div class="testgroup"><h2>' + lastTestDesc + '</h2>' + lastDiv + '</div>';
 	output_div.elements[0].innerHTML = html;
 	return bacon._testResults;
-}
-
-bacon.expect = function(input) {
-	return new BaconTest(input);
 }
 
 function BaconTest(input) {
