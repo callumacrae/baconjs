@@ -68,3 +68,8 @@ BaconTest.prototype.toEqual = function(value) {
 	value = (this.input === value) ? true : 'Expected ' + value + ' to equal ' + this.input + '.';
 	bacon._currentTest.push(value);
 }
+
+BaconTest.prototype.toNotEqual = function(value) {
+	value = (this.input === value) ? 'Expected ' + value + ' to not equal ' + this.input + '.' : true;
+	bacon._currentTest.push(value);
+}
