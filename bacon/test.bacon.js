@@ -1,11 +1,15 @@
 bacon._testData = [];
+bacon._asyncTestTimeout = 400;
 
 bacon.describe = function(desc, fn) {
 	bacon._testData.push([desc, fn]);
 }
 
-bacon.it = function(desc, fn) {
-	bacon._currentTestData.push([desc, fn]);
+bacon.it = function(desc, fn, async) {
+	if (typeof async === 'undefined') {
+		async = false;
+	}
+	bacon._currentTestData.push([desc, fn, async]);
 }
 
 bacon.expect = function(input) {
@@ -14,50 +18,85 @@ bacon.expect = function(input) {
 
 bacon.runTests = function(output_div) {
 	bacon._testResults = [];
-	for (var i = 0, j; i < bacon._testData.length; i++) {
+	var i = -1, j, interval2, contin = true, contin2 = true;
+	var interval = setInterval(function() {
+		if (!contin) {
+			return;
+		}
+		if (++i >= bacon._testData.length) {
+			clearInterval(interval);
+			var errors, html = '', lastTestDesc = bacon._testResults[0].desc, lastDiv = '',
+				result, results = bacon._testResults, success;
+				
+			for (i = 0; i < bacon._testResults.length; i++) {
+				result = bacon._testResults[i];
+				
+				// If different group of tests, output the previous one and start a new one
+				if (result.desc !== lastTestDesc) {
+					html += '<div class="testgroup"><h2>' + lastTestDesc + '</h2>' + lastDiv + '</div>';
+					lastTestDesc = result.desc;
+					lastDiv = '';
+				}
+				
+				success = true;
+				errors = [];
+				
+				for (j = 0; j < result.results.length; j++) {
+					if (result.results[j] !== true) {
+						success = false;
+						errors.push('<strong>' + result.results[j] + '</strong>');
+					}
+				}
+				
+				success = (success) ? 'success' : 'failure';
+				errors = errors.join('<br />');
+				lastDiv += '<div class="test ' + success + '"><p>' + result.it + '</p>' + errors + '</div>';
+			}
+			html += '<div class="testgroup"><h2>' + lastTestDesc + '</h2>' + lastDiv + '</div>';
+			output_div.elements[0].innerHTML = html;
+			return;
+		}
+		
 		bacon._currentTestData = [];
 		bacon._testData[i][1].call();
-		for (j = 0; j < bacon._currentTestData.length; j++) {
+		
+		j = -1;
+		
+		contin = false;
+		
+		interval2 = setInterval(function() {
+			if (!contin2) {
+				return;
+			}
+			
+			if (++j >= bacon._currentTestData.length) {
+				clearInterval(interval2);
+				contin = true;
+				return;
+			}
+			
 			bacon._currentTest = [];
-			bacon._currentTestData[j][1].call();
+			
+			if (bacon._currentTestData[j][2]) {
+				contin2 = false;
+				var time = bacon._currentTestData[j][2]
+				setInterval(function() {
+					bacon._currentTest.push('Timeout');
+					contin2 = true;
+				}, typeof time === 'number' ? time : bacon._asyncTestTimeout);
+			}
+			
+			bacon._currentTestData[j][1].call(null, function() {
+				contin2 = true;
+			});
+			
 			bacon._testResults.push({
 				desc: bacon._testData[i][0],
 				it: bacon._currentTestData[j][0],
 				results: bacon._currentTest
 			});
-		}
-	}
-	
-	var errors, html = '', lastTestDesc = bacon._testResults[0].desc, lastDiv = '',
-		result, results = bacon._testResults, success;
-		
-	for (i = 0; i < bacon._testResults.length; i++) {
-		result = bacon._testResults[i];
-		
-		// If different group of tests, output the previous one and start a new one
-		if (result.desc !== lastTestDesc) {
-			html += '<div class="testgroup"><h2>' + lastTestDesc + '</h2>' + lastDiv + '</div>';
-			lastTestDesc = result.desc;
-			lastDiv = '';
-		}
-		
-		success = true;
-		errors = [];
-		
-		for (j = 0; j < result.results.length; j++) {
-			if (result.results[j] !== true) {
-				success = false;
-				errors.push('<strong>' + result.results[j] + '</strong>');
-			}
-		}
-		
-		success = (success) ? 'success' : 'failure';
-		errors = errors.join('<br />');
-		lastDiv += '<div class="test ' + success + '"><p>' + result.it + '</p>' + errors + '</div>';
-	}
-	html += '<div class="testgroup"><h2>' + lastTestDesc + '</h2>' + lastDiv + '</div>';
-	output_div.elements[0].innerHTML = html;
-	return bacon._testResults;
+		}, 1);
+	}, 1);
 }
 
 function BaconTest(input) {
