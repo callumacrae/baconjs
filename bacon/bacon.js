@@ -82,6 +82,23 @@ bacon.html.previous = function(selector) {
 };
 
 /**
+ * Returns a list of immediate children nodes (optionally matching selector).
+ * If the current object holds more than one element, only the first will be used.
+ *
+ * @param string selector The selector to be used.
+ * @returns BaconObj The children.
+ */
+bacon.html.children = function(selector) {
+	var children = this.elements[0].childNodes, final_children = [];
+	for (var i = 0; i < children.length; i++) {
+		if (children[i].nodeType === 1 && (typeof selector === 'undefined' || children[i].matchesSelector(selector))) {
+			final_children.push(children[i]);
+		}
+	}
+	return $(final_children);
+};
+
+/**
  * Returns the parent DOM element (optionally matching a specified selector).
  * If the current object holds more than one element, only the first will be used.
  *
@@ -94,7 +111,7 @@ bacon.html.parent = function(selector) {
 		parent = parent.parentNode;
 	}
 	return $(parent);
-}
+};
 
 
 

@@ -39,6 +39,13 @@ $.describe('bacon DOM tests', function() {
 		$.expect($('h2').previous('h1').elements[0]).toBe($('h1').elements[0]);
 	});
 	
+	$.it('should use .children correctly', function() {
+		$.expect($('.thediv').children().length).toEqual(4);
+		$.expect($('.thediv').children('span').length).toEqual(1);
+		$.expect($('.thediv').children('p').length).toEqual(3);
+		$.expect($('body').children('h1').length).toEqual(1);
+	});
+	
 	$.it('should use .parent correctly', function() {
 		$.expect($('a').parent().elements[0]).toBe($('p').elements[0]);
 		$.expect($('a').parent('body').elements[0]).toBe($('body').elements[0]);
