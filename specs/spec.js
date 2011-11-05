@@ -67,4 +67,16 @@ $.describe('Bacon test tests', function() {
 		$.expect(['one', 'two', 'three']).toNotContain('world');
 		$.expect(['hello', 'world']).toNotContain('ell');
 	});
+	
+	$.it('should work .toBeLessThan correctly', function() {
+		$.expect(4).toBeLessThan(8);
+		$.expect(3.999).toBeLessThan(4);
+		$.expect('abc').toBeLessThan('bc');
+	});
+	
+	$.it('should work .toBeGreaterThan correctly', function() {
+		$.expect(10).toBeGreaterThan(8);
+		$.expect(4.0001).toBeGreaterThan(4);
+		$.expect('zebra').toBeGreaterThan('aardvark');
+	});
 });

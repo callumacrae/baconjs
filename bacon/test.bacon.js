@@ -140,3 +140,13 @@ BaconTest.prototype.toNotContain = function(value) {
 	value = (this.input.indexOf(value) < 0) ? true : 'Expected ' + this.input + ' to not contain ' + value + '.';
 	bacon._currentTest.push(value);
 }
+
+BaconTest.prototype.toBeLessThan = function(value) {
+	value = (this.input < value) ? true : 'Expected ' + this.input + ' to be less than ' + value + '.';
+	bacon._currentTest.push(value);
+}
+
+BaconTest.prototype.toBeGreaterThan = function(value) {
+	value = (this.input > value) ? true : 'Expected ' + this.input + ' to be less than ' + value + '.';
+	bacon._currentTest.push(value);
+}
