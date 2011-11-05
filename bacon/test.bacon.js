@@ -64,6 +64,41 @@ function BaconTest(input) {
 	this.input = input;
 }
 
+BaconTest.prototype._compare = function(input, value) {
+	var pass = false;
+	if (typeof value === 'string' || typeof value === 'number' || typeof value === 'boolean') {
+		return (input == value);
+	} else if (value instanceof Array && input instanceof Array) {
+		for (var i = 0; i < value.length; i++) {
+			if (!BaconTest.prototype._compare(input[i], value[i])) {
+				return false;
+			}
+		}
+		return true;
+	} else if (typeof value === 'object' && typeof input === 'object') {
+		var prop;
+		for (prop in value) {
+			if (!BaconTest.prototype._compare(input[prop], value[prop])) {
+				return false;
+			}
+		}
+		return true;
+	}
+	return false;
+}
+
+BaconTest.prototype.toEqual = function(value) {
+	value = BaconTest.prototype._compare(this.input, value);
+	value = value ? true : 'Expected ' + value + ' to equal ' + this.input;
+	bacon._currentTest.push(value);
+}
+
+BaconTest.prototype.toNotEqual = function(value) {
+	value = !BaconTest.prototype._compare(this.input, value);
+	value = value ? true : 'Expected ' + value + ' to not equal ' + this.input;
+	bacon._currentTest.push(value);
+}
+
 BaconTest.prototype.toBe = function(value) {
 	value = (this.input === value) ? true : 'Expected ' + value + ' to be ' + this.input + '.';
 	bacon._currentTest.push(value);
