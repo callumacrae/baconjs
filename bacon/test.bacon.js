@@ -162,3 +162,11 @@ BaconTest.prototype.toBeUnDefined = function() {
 BaconTest.prototype.toBeNull = function() {
 	bacon._currentTest.push((this.input === null) ? true : 'Expected var to be null');
 }
+
+BaconTest.prototype.toBeTruthy = function() {
+	bacon._currentTest.push((this.input) ? true : 'Expected ' + this.input + ' to be truthy');
+}
+
+BaconTest.prototype.toBeFalsy = function() {
+	bacon._currentTest.push((this.input) ? 'Expected ' + this.input + ' to be falsy' : true);
+}

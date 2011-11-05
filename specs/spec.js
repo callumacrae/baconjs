@@ -92,5 +92,20 @@ $.describe('Bacon test tests', function() {
 	
 	$.it('should work .toBeNull correctly', function() {
 		$.expect(null).toBeNull();
-	})
+	});
+	
+	$.it('should work .toBeTruthy correctly', function() {
+		$.expect('0').toBeTruthy();
+		$.expect('hi').toBeTruthy();
+		$.expect(true).toBeTruthy();
+		$.expect(1).toBeTruthy();
+		$.expect(125).toBeTruthy();
+	});
+	
+	$.it('should work .toBeFalsy correctly', function() {
+		$.expect(false).toBeFalsy();
+		$.expect(0).toBeFalsy();
+		$.expect(null).toBeFalsy();
+		$.expect(NaN).toBeFalsy();
+	});
 });
