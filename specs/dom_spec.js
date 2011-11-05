@@ -50,4 +50,10 @@ $.describe('bacon DOM tests', function() {
 		$.expect($('a').parent().elements[0]).toBe($('p').elements[0]);
 		$.expect($('a').parent('body').elements[0]).toBe($('body').elements[0]);
 	});
+	
+	$.it('should use .siblings correctly', function() {
+		$.expect($('.thediv p').siblings().length).toEqual(3);
+		$.expect($('.thediv p').siblings('p').length).toEqual(2);
+		$.expect($('.thediv p').siblings('span').length).toEqual(1);
+	});
 });

@@ -112,6 +112,26 @@ bacon.html.parent = function(selector) {
 	}
 	return $(parent);
 };
+/**
+ * Returns the siblings of the current element (optionally matching a specified
+ * selector). If the current object holds more than one element, only the first
+ * will be used.
+ *
+ * @param string selector The selector to be used.
+ * @returns BaconObj The siblings.
+ */
+bacon.html.siblings = function(selector) {
+	var siblings = this.parent().children(selector);
+	for (var i = 0; i < siblings.length; i++) {
+		// Remove the current element (it isn't a sibling).
+		if (siblings.elements[i] === this.elements[0]) {
+			siblings.elements.splice(i, 1);
+			siblings.length--;
+			break;
+		}
+	}
+	return siblings;
+}
 
 
 
