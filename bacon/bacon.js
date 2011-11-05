@@ -71,7 +71,7 @@ bacon.html.next = function(selector) {
  * If the current object holds more than one element, only the first will be used.
  *
  * @param string selector The selector to be used.
- * @returns BaconObj The next element.
+ * @returns BaconObj The previous element.
  */
 bacon.html.previous = function(selector) {
 	var previous = this.elements[0].previousSibling;
@@ -80,6 +80,21 @@ bacon.html.previous = function(selector) {
 	}
 	return $(previous);
 };
+
+/**
+ * Returns the parent DOM element (optionally matching a specified selector).
+ * If the current object holds more than one element, only the first will be used.
+ *
+ * @param string selector The selector to be used.
+ * @returns BaconObj The parent element.
+ */
+bacon.html.parent = function(selector) {
+	var parent = this.elements[0].parentNode;
+	while (typeof selector !== 'undefined' && !parent.matchesSelector(selector)) {
+		parent = parent.parentNode;
+	}
+	return $(parent);
+}
 
 
 
