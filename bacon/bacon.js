@@ -174,6 +174,36 @@ bacon.html.append = function(html) {
 	return this;
 }
 
+/**
+ * Prepends the provided node / BaconObj / HTML string to the current element(s).
+ *
+ * @param object html The HTMLElement / BaconObj / HTML string to prepend.
+ */
+bacon.html.prepend = function(html) {
+	if (html instanceof HTMLElement) {
+		this.each(function() {
+			this.insertBefore(html.cloneNode(true), this.childNodes[0]);
+		});
+	} else if (html instanceof BaconObj) {
+		var i;
+		this.each(function() {
+			for (i = 0; i < html.elements.length; i++) {
+				this.insertBefore(html.elements[i].cloneNode(true), this.childNodes[0]);
+			}
+		});
+	} else if (typeof html === 'string') {
+		var div = document.createElement('div');
+		div.innerHTML = html;
+		var children = $(div).children().elements, i;
+		this.each(function() {
+			for (i = 0; i < children.length; i++) {
+				this.insertBefore(children[i].cloneNode(true), this.childNodes[0]);
+			}
+		});
+	}
+	return this;
+}
+
 
 
 /*****************************************************************************

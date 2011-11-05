@@ -78,4 +78,21 @@ $.describe('bacon DOM tests', function() {
 		$('.thediv').append('<i>test</i>');
 		$.expect($('.thediv i').length).toEqual(1);
 	});
+	
+	$.it('should prepend from HTMLElement properly', function() {
+		var div = document.createElement('strong');
+		div.innerHTML = 'test';
+		$('.thediv').prepend(div);
+		$.expect($('.thediv strong').length).toEqual(2);
+	});
+	
+	$.it('should prepend from BaconObj properly', function() {
+		$('.thediv').prepend($('.thediv strong').get(0));
+		$.expect($('.thediv strong').length).toEqual(3);
+	});
+	
+	$.it('should prepend from HTML string properly', function() {
+		$('.thediv').prepend('<strong>test</strong>');
+		$.expect($('.thediv strong').length).toEqual(4);
+	});
 });
