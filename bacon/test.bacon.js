@@ -108,3 +108,21 @@ BaconTest.prototype.toNotBe = function(value) {
 	value = (this.input === value) ? 'Expected ' + value + ' to not be ' + this.input + '.' : true;
 	bacon._currentTest.push(value);
 }
+
+BaconTest.prototype.toMatch = function(value) {
+	if (!(value instanceof RegExp)) {
+		value = new RegExp(value);
+	}
+	
+	value = value.test(this.input) ? true : 'Expected ' + this.input + ' to match ' + value + '.';
+	bacon._currentTest.push(value);
+}
+
+BaconTest.prototype.toNotMatch = function(value) {
+	if (!(value instanceof RegExp)) {
+		value = new RegExp(value);
+	}
+	
+	value = value.test(this.input) ? 'Expected ' + this.input + ' to match ' + value + '.' : true;
+	bacon._currentTest.push(value);
+}

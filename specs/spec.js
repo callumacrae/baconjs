@@ -35,4 +35,16 @@ $.describe('Bacon test tests', function() {
 		$.expect([]).toNotBe([]);
 		$.expect({}).toNotBe({});
 	});
+	
+	$.it('should work .toMatch correctly', function() {
+		$.expect('a').toMatch('[a-z]');
+		$.expect('a').toMatch(/[a-z]/);
+		$.expect('a').toMatch(/[A-Z]/i);
+	});
+	
+	$.it('should work .toNotMatch correctly', function() {
+		$.expect('a').toNotMatch('[b-z]');
+		$.expect('a').toNotMatch(/[b-z]/);
+		$.expect('a').toNotMatch(/[A-Z]/);
+	});
 });
