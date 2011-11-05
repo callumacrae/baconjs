@@ -130,3 +130,13 @@ BaconTest.prototype.toNotMatch = function(value) {
 	value = value.test(this.input) ? 'Expected ' + this.input + ' to not match ' + value + '.' : true;
 	bacon._currentTest.push(value);
 }
+
+BaconTest.prototype.toContain = function(value) {
+	value = (this.input.indexOf(value) < 0) ? 'Expected ' + this.input + ' to contain ' + value + '.' : true;
+	bacon._currentTest.push(value);
+}
+
+BaconTest.prototype.toNotContain = function(value) {
+	value = (this.input.indexOf(value) < 0) ? true : 'Expected ' + this.input + ' to not contain ' + value + '.';
+	bacon._currentTest.push(value);
+}

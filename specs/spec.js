@@ -47,4 +47,14 @@ $.describe('Bacon test tests', function() {
 		$.expect('a').toNotMatch(/[b-z]/);
 		$.expect('a').toNotMatch(/[A-Z]/);
 	});
+	
+	$.it('should work .toContain correctly for strings', function() {
+		$.expect('hello world!').toContain('world');
+		$.expect('another string').toContain('her');
+	});
+	
+	$.it('should work .toNotContain correctly for strings', function() {
+		$.expect('hello world!').toNotContain('her');
+		$.expect('another string').toNotContain('world');
+	});
 });
