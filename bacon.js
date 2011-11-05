@@ -67,34 +67,22 @@ bacon._eventData = [];
  */
 bacon.html.on = function(event, callback, one) {
 	this.each(function() {
+		var that = this, handler = function(e) {
+			if (callback.call(that, e) === false) {
+				e.stopPropagation();
+				e.preventDefault();
+			}
+			
+			if (handler.one) {
+				bacon.html.removeHandlers.call($(that), event, callback);
+			}
+		};
+		handler.one = (typeof one !== 'undefined');
+		handler.callback = callback;
 		if (this.addEventListener) {
-			var handler = function(e) {
-				if (callback.call(this, e) === false) {
-					e.stopPropagation();
-					e.preventDefault();
-				}
-				
-				if (handler.one) {
-					bacon.html.removeHandlers.call($(this), event, callback);
-				}
-			};
-			handler.one = (typeof one !== 'undefined');
-			handler.callback = callback;
 			this.addEventListener(event, handler);
 		} else {
 			// Internet Explorer support
-			var that = this, handler = function(e) {
-				if (callback.call(that, e) === false) {
-					e.stopPropagation();
-					e.preventDefault();
-				}
-				
-				if (handler.one) {
-					bacon.html.removeHandlers.call($(that), event, callback);
-				}
-			};
-			handler.one = (typeof one !== 'undefined');
-			handler.callback = callback;
 			this.attachEvent('on' + event, handler);
 		}
 			
