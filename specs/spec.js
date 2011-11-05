@@ -79,4 +79,14 @@ $.describe('Bacon test tests', function() {
 		$.expect(4.0001).toBeGreaterThan(4);
 		$.expect('zebra').toBeGreaterThan('aardvark');
 	});
+	
+	$.it('should work .toBeDefined correctly', function() {
+		var obj = {foo: 'bar'};
+		$.expect(obj.foo).toBeDefined();
+	});
+	
+	$.it('should work .toBeUnDefined correctly', function() {
+		var obj = {};
+		$.expect(obj.foo).toBeUnDefined();
+	});
 });
