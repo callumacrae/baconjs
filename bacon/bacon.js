@@ -51,13 +51,13 @@ bacon.html.each = function(callback) {
 	return this;
 };
 
-bacon._eventData = [];
-
 
 
 /*****************************************************************************
  *                               EVENT HANDLING
  ****************************************************************************/
+
+bacon._eventData = [];
 
 /**
  * Adds an event handler for the specified event. Cross-browser compatible.
