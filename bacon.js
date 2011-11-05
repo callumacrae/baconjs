@@ -4,11 +4,12 @@ var $, bacon = $ = function(selector, limit) {
 	var elements = new BaconObj();
 	if (typeof selector === 'object') {
 		elements.elements = (selector instanceof Array) ? selector : [selector];
+		elements.length = elements.elements.length;
 	} else {
 		elements.elements = [document];
 		elements.select(selector, limit);
 	}
-	return (elements.elements === null) ? null : elements;
+	return elements;
 };
 BaconObj.prototype = bacon.html = {};
 
@@ -33,6 +34,7 @@ bacon.html.select = function(selector, limit) {
 		}
 	}
 	this.elements = elements;
+	this.length = this.elements.length;
 	return this;
 };
 
