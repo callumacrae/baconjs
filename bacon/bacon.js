@@ -144,6 +144,36 @@ bacon.html.get = function(number) {
 	return $(this.elements[number]);
 }
 
+/**
+ * Appends the provided node / BaconObj / HTML string to the current element(s).
+ *
+ * @param object html The HTMLElement / BaconObj / HTML string to append.
+ */
+bacon.html.append = function(html) {
+	if (html instanceof HTMLElement) {
+		this.each(function() {
+			this.appendChild(html.cloneNode(true));
+		});
+	} else if (html instanceof BaconObj) {
+		var i;
+		this.each(function() {
+			for (i = 0; i < html.elements.length; i++) {
+				this.appendChild(html.elements[i].cloneNode(true));
+			}
+		});
+	} else if (typeof html === 'string') {
+		var div = document.createElement('div');
+		div.innerHTML = html;
+		var children = $(div).children().elements, i;
+		this.each(function() {
+			for (i = 0; i < children.length; i++) {
+				this.appendChild(children[i].cloneNode(true));
+			}
+		});
+	}
+	return this;
+}
+
 
 
 /*****************************************************************************
