@@ -61,7 +61,7 @@ bacon.html.each = function(callback) {
  */
 bacon.html.next = function(selector) {
 	var next = this.elements[0].nextSibling;
-	while (next && next.nodeType !== 1 || (typeof selector !== 'undefined' && !next.matchesSelector(selector))) {
+	while (next && next.nodeType !== 1 || (typeof selector !== 'undefined' && !$(next).matches(selector))) {
 		next = next.nextSibling;
 	}
 	return $(next);
@@ -76,7 +76,7 @@ bacon.html.next = function(selector) {
  */
 bacon.html.previous = function(selector) {
 	var previous = this.elements[0].previousSibling;
-	while (previous && previous.nodeType !== 1 || (typeof selector !== 'undefined' && !previous.matchesSelector(selector))) {
+	while (previous && previous.nodeType !== 1 || (typeof selector !== 'undefined' && !$(previous).matches(selector))) {
 		previous = previous.previousSibling;
 	}
 	return $(previous);
@@ -92,7 +92,7 @@ bacon.html.previous = function(selector) {
 bacon.html.children = function(selector) {
 	var children = this.elements[0].childNodes, final_children = [];
 	for (var i = 0; i < children.length; i++) {
-		if (children[i].nodeType === 1 && (typeof selector === 'undefined' || children[i].matchesSelector(selector))) {
+		if (children[i].nodeType === 1 && (typeof selector === 'undefined' || $(children[i]).matches(selector))) {
 			final_children.push(children[i]);
 		}
 	}
@@ -108,7 +108,7 @@ bacon.html.children = function(selector) {
  */
 bacon.html.parent = function(selector) {
 	var parent = this.elements[0].parentNode;
-	while (typeof selector !== 'undefined' && !parent.matchesSelector(selector)) {
+	while (typeof selector !== 'undefined' && !$(parent).matches(selector)) {
 		parent = parent.parentNode;
 	}
 	return $(parent);
@@ -227,6 +227,28 @@ bacon.html.copyTo = function(selector, prepend) {
 	}
 };
 
+/**
+ * Tests whether an element matches a selector or not.
+ *
+ * @param string selector The selector to test.
+ */
+bacon.html.matches = function(selector) {
+	if (this.elements[0].matchesSelector) {
+		return this.elements[0].matchesSelector(selector);
+	} else if (this.elements[0].webkitMatchesSelector) {
+		return this.elements[0].webkitMatchesSelector(selector);
+	} else if (this.elements[0].mozMatchesSelector) {
+		return this.elements[0].mozMatchesSelector(selector);
+	}
+	var possibles = this.elements[0].parentNode.querySelectorAll(selector);
+	for (var i = 0; i < possibles.length; i++) {
+		if (possibles[i] === this.elements[0]) {
+			return true;
+		}
+	}
+	return false;
+}
+
 
 
 /*****************************************************************************
@@ -334,28 +356,3 @@ bacon.html.removeHandlers = bacon.html.off = function(event, callback) {
 	});
 	return this;
 };
-
-
-
-/*****************************************************************************
- *                                  OLD BROWSERS
- ****************************************************************************/
-
-
-if (!HTMLElement.prototype.matchesSelector) {
-	HTMLElement.prototype.matchesSelector = function(selector) {
-		if (HTMLElement.prototype.webkitMatchesSelector) {
-			return this.webkitMatchesSelector(selector);
-		} else if (HTMLElement.prototype.mozMatchesSelector) {
-			return this.mozMatchesSelector(selector);
-		}
-		var possibles = this.parentNode.querySelectorAll(selector);
-		for (var i = 0; i < possibles.length; i++) {
-			if (possibles[i] === this) {
-				return true;
-			}
-		}
-		return false;
-	};
-}
-
