@@ -133,7 +133,7 @@ bacon.html.siblings = function(selector) {
 		}
 	}
 	return siblings;
-}
+};
 
 /**
  * Gets the specified element from the list.
@@ -143,7 +143,7 @@ bacon.html.siblings = function(selector) {
  */
 bacon.html.get = function(number) {
 	return $(this.elements[number]);
-}
+};
 
 /**
  * Takes either an HTMLElement, BaconObj or HTML string and returns a
@@ -163,7 +163,7 @@ bacon._toBaconObj = function(html) {
 		return $(div).children();
 	}
 	return false;
-}
+};
 
 /**
  * Appends the provided node / BaconObj / HTML string to the current element(s).
@@ -179,7 +179,7 @@ bacon.html.append = function(html) {
 		}
 	});
 	return this;
-}
+};
 
 /**
  * Prepends the provided node / BaconObj / HTML string to the current element(s).
@@ -195,7 +195,7 @@ bacon.html.prepend = function(html) {
 		}
 	});
 	return this;
-}
+};
 
 /**
  * Moves the element to the element specified by the selector.
@@ -210,7 +210,7 @@ bacon.html.moveTo = function(selector, prepend) {
 	} else {
 		to.insertBefore(this.elements[0], to.childNodes[0])
 	}
-}
+};
 
 /**
  * Copies the element to the element specified by the selector.
@@ -225,7 +225,7 @@ bacon.html.copyTo = function(selector, prepend) {
 	} else {
 		to.prepend(this);
 	}
-}
+};
 
 
 
