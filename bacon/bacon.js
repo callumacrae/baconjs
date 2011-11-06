@@ -247,7 +247,7 @@ bacon.html.matches = function(selector) {
 		}
 	}
 	return false;
-}
+};
 
 
 
