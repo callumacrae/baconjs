@@ -286,12 +286,10 @@ bacon.html.on = function(event, callback, one) {
 			this.attachEvent('on' + event, handler);
 		}
 
-		// The dataset object is the data attributes - this.dataset.thisThing
-		// would be data-this-thing.
-		if (!this.dataset.baconId) {
-			this.dataset.baconId = bacon._eventData.push([[event, handler]]) - 1;
+		if (!$(this).data('baconId')) {
+			$(this).data('baconId', bacon._eventData.push([[event, handler]]) - 1);
 		} else {
-			bacon._eventData[this.dataset.baconId].push([event, handler]);
+			bacon._eventData[$(this).data('baconId')].push([event, handler]);
 		}
 	});
 	return this;
@@ -340,8 +338,8 @@ bacon.html.trigger = function(event, callback) {
  */
 bacon.html.removeHandlers = bacon.html.off = function(event, callback) {
 	this.each(function() {
-		if (this.dataset.baconId) {
-			var data = bacon._eventData[this.dataset.baconId];
+		if ($(this).data('baconId')) {
+			var data = bacon._eventData[$(this).data('baconId')];
 			for (var i = 0; i < data.length; i++) {
 				if (data[i][0] === event && (typeof callback === 'undefined' || data[i][1].callback === callback)) {
 					if (this.removeEventListener) {
@@ -356,3 +354,27 @@ bacon.html.removeHandlers = bacon.html.off = function(event, callback) {
 	});
 	return this;
 };
+
+
+
+/*****************************************************************************
+ *                                         HELPERS
+ ****************************************************************************/
+
+// Data helper
+bacon.html.data = function(get, set) {
+	if (typeof set === 'undefined' && this.elements[0].dataset) {
+		return this.elements[0].dataset[get];
+	}
+	
+	this.each(function() {
+		if (this.dataset) {
+			this.dataset[get] = set;
+		} else {
+			this.dataset = {};
+			return $(this).data(get, set);
+		}
+	});
+	return this;
+};
+
