@@ -358,6 +358,100 @@ bacon.html.removeHandlers = bacon.html.off = function(event, callback) {
 
 
 /*****************************************************************************
+ *                                            AJAX
+ ****************************************************************************/
+
+/**
+ * Sends an XHR request. See the spec for more info, but you can specifiy
+ * parameters or an object as the first parameter.
+ *
+ * @param string method HTTP method to use.
+ * @param string url The URL to send to.
+ * @param string data The object to send (can also be a string).
+ * @param func callback Function to send the data to.
+ */
+bacon.req = function(method, url, data, callback) {
+	if (typeof method === 'object') {
+		url = method.url;
+		data = method.data;
+		callback = method.callback;
+		error = method.error;
+		method = method.method;
+	} else if (typeof data === 'function') {
+		callback = data;
+	}
+	
+	if (typeof data === 'object') {
+		data = bacon.querystring(data);
+	}
+	
+	if (method === 'GET' && typeof data === 'string') {
+		url += '?' + data;
+		delete data;
+	}
+	
+	if (window.XMLHttpRequest) {
+		req = new XMLHttpRequest();
+	} else {
+		req = new ActiveXObject('Microsoft.XMLHTTP');
+	}
+	
+	req.open(method, url, true);
+	req.onreadystatechange = function() {
+		if (req.readyState === 4 && req.status === 200) {
+			req.body = req.responseText;
+			if (req.getResponseHeader('Content-type') === 'application/json') {
+				callback(JSON.parse(req.responseText));
+			} else {
+				callback(req.responseText, req)
+			}
+		} else if (req.readyState === 4 && typeof error === 'function') {
+			req.body = req.responseText;
+			error(req.status, req);
+		} else if (req.readyState === 4) {
+			throw new Error('XHR Request failed: ' + req.status);
+		}
+	};
+	req.send((typeof data === 'string') ? data + '\n': null);
+};
+
+/**
+ * GETs the specified URL.
+ *
+ * @param string url The URL to send to.
+ * @param string data The object to send (can also be a string).
+ * @param func callback The function to send that data to.
+ */
+bacon.get = function(url, data, callback) {
+	if (typeof url === 'object') {
+		url.method = 'GET';
+		return bacon.req(url);
+	} else {
+		return bacon.req('GET', url, data, callback);
+	}
+};
+
+/**
+ * POSTs data to the specified URL.
+ *
+ * @todo: Why isn't this working?
+ *
+ * @param string url The URL to send to.
+ * @param string data The object to send (can also be a string).
+ * @param func callback The function to send that data to.
+ */
+bacon.post = function(url, data, callback) {
+	if (typeof url === 'object') {
+		url.method = 'POST';
+		return bacon.req(url);
+	} else {
+		return bacon.req('POST', url, data, callback);
+	}
+};
+
+
+
+/*****************************************************************************
  *                                         HELPERS
  ****************************************************************************/
 
