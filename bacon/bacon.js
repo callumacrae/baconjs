@@ -378,3 +378,45 @@ bacon.html.data = function(get, set) {
 	return this;
 };
 
+
+// Querystring helper
+bacon.querystring = bacon.qs = function(query) {
+	if (typeof query === 'object') {
+		// Convert from object to string
+		var string = [], i, j;
+		for (i in query) {
+			if (typeof query[i] === 'string') {
+				string.push(i + '=' + query[i]);
+			} else if (query[i] instanceof Array) {
+				for (j = 0; j < query[i].length; j++) {
+					string.push(i + '[]=' + query[i][j]);
+				}
+			} else if (typeof query[i] === 'object') {
+				for (j in query[i]) {
+					string.push(i + '[' + j + ']=' + query[i][j]);
+				}
+			}
+		}
+		return string.join('&');
+	} else if (typeof query === 'string') {
+		// Convert from string to object
+		query = query.split('&');
+		for (var obj = {}, i = 0; i < query.length; i++) {
+			var match;
+			if (match = /^([^\[\]]+)\[([^\[\]]+)\]=(.+)$/.exec(query[i])) {
+				if (typeof obj[match[1]] === 'undefined') {
+					obj[match[1]] = {};
+				}
+				obj[match[1]][match[2]] = match[3];
+			} else if (match = /^([^\[\]]+)\[\]=(.+)$/.exec(query[i])) {
+				if (typeof obj[match[1]] === 'undefined') {
+					obj[match[1]] = [];
+				}
+				obj[match[1]].push(match[2]);
+			} else if (match = /^([^=]+)=(.+)$/.exec(query[i])) {
+				obj[match[1]] = match[2];
+			}
+		}
+		return obj;
+	}
+};
