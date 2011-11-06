@@ -27,7 +27,8 @@ BaconObj.prototype = bacon.html = {};
  * @param int limit Limit the returned elements to this value.
  */
 bacon.html.select = function(selector, limit) {
-	for (var els, elements = [], i = 0, j; i < this.elements.length && (typeof limit === 'undefined' || elements.length < limit); i++) {
+	var els, elements = [], i, j;
+	for (i = 0; i < this.elements.length && (typeof limit === 'undefined' || elements.length < limit); i++) {
 		els = this.elements[i].querySelectorAll(selector);
 		for (j = 0; j < els.length && (typeof limit === 'undefined' || elements.length < limit); j++) {
 			elements.push(els[j]);
@@ -155,21 +156,11 @@ bacon._toBaconObj = function(html) {
 	if (html instanceof BaconObj) {
 		return html;
 	} else if (html instanceof  HTMLElement) {
-		var obj = new BaconObj();
-		obj.length = 1;
-		obj.elements = [html.cloneNode(true)];
-		return obj;
+		return $(html.cloneNode(true));
 	} else if (typeof html === 'string') {
 		var div = document.createElement('div');
 		div.innerHTML = html;
-		var children = $(div).children().elements;
-		var obj = new BaconObj();
-		obj.length = children.length;
-		obj.elements = [];
-		for (var i = 0; i < children.length; i++) {
-			obj.elements.push(children[i]);
-		}
-		return obj;
+		return $(div).children();
 	}
 	return false;
 }
@@ -213,11 +204,11 @@ bacon.html.prepend = function(html) {
  * @param bool prepend If true, will be prepended instead of appended.
  */
 bacon.html.moveTo = function(selector, prepend) {
-	var to = (typeof selector === 'string') ? $(selector, 1) : selector;
+	var to = ((typeof selector === 'string') ? $(selector, 1) : selector).elements[0];
 	if (typeof prepend === 'undefined' || !prepend) {
-		to.elements[0].appendChild(this.elements[0]);
+		to.appendChild(this.elements[0]);
 	} else {
-		to.elements[0].insertBefore(this.elements[0], to.elements[0].childNodes[0])
+		to.insertBefore(this.elements[0], to.childNodes[0])
 	}
 }
 
