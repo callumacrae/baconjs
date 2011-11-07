@@ -272,7 +272,7 @@ bacon.html.on = function(event, callback, one) {
 				e.stopPropagation();
 				e.preventDefault();
 			}
-			
+
 			if (handler.one) {
 				bacon.html.removeHandlers.call($(that), event, callback);
 			}
@@ -380,22 +380,22 @@ bacon.req = function(method, url, data, callback) {
 	} else if (typeof data === 'function') {
 		callback = data;
 	}
-	
+
 	if (typeof data === 'object') {
 		data = bacon.querystring(data);
 	}
-	
+
 	if (method === 'GET' && typeof data === 'string') {
 		url += '?' + data;
 		delete data;
 	}
-	
+
 	if (window.XMLHttpRequest) {
 		req = new XMLHttpRequest();
 	} else {
 		req = new ActiveXObject('Microsoft.XMLHTTP');
 	}
-	
+
 	req.open(method, url, true);
 	req.onreadystatechange = function() {
 		if (req.readyState === 4 && req.status === 200) {
@@ -460,7 +460,7 @@ bacon.html.data = function(get, set) {
 	if (typeof set === 'undefined' && this.elements[0].dataset) {
 		return this.elements[0].dataset[get];
 	}
-	
+
 	this.each(function() {
 		if (this.dataset) {
 			this.dataset[get] = set;
@@ -513,4 +513,24 @@ bacon.querystring = bacon.qs = function(query) {
 		}
 		return obj;
 	}
+};
+
+// Form helper
+bacon.html.serialise = function(object) {
+	if (this.elements[0].tagName !== 'FORM') {
+		throw new Error('You can only serialise forms.');
+	}
+	if (typeof object !== 'boolean') {
+		object = false;
+	}
+
+	var form = this.elements[0].elements, i, string = [], obj = {};
+	for (i = 0; i < form.length; i++) {
+		if (object) {
+			obj[form[i].name] = form[i].value;
+		} else {
+			string.push(form[i].name + '=' + form[i].value);
+		}
+	}
+	return (object) ? obj : string.join('&');
 };
