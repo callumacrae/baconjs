@@ -708,3 +708,39 @@ Array.prototype.flatten = function() {
 	}
 	return end;
 };
+
+/**
+ * Removes all instances of value or an array of values.
+ *
+ * @param value The value / values to remove.
+ * @param bool array If true, will treat value as an array of values.
+ * @returns array The array without the values.
+ */
+Array.prototype.without = function(value, array) {
+	if (typeof array === 'undefined' || !array) {
+		value = [value];
+	}
+
+	for (var clone = this.slice(), i = 0; i < value.length; i++) {
+		while (clone.indexOf(value[i]) !== -1) {
+			clone.splice(clone.indexOf(value[i]), 1);
+		}
+	}
+
+	return clone;
+};
+
+/**
+ * Returns the array without all duplicate entries removed.
+ *
+ * @returns array The array without the duplicates.
+ */
+Array.prototype.unique = function() {
+	for (var i = 0, clone = this.slice(); i < clone.length; i++) {
+		if (clone.indexOf(clone[i]) < i) {
+			clone.splice(i, 1);
+			i--;
+		}
+	}
+	return clone;
+};

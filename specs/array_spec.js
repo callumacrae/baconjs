@@ -75,4 +75,22 @@ $.describe('array prototype test', function() {
 		$.expect(['one', [['two'], 'three', [[[['four']]]]]].flatten()).toEqual(['one', 'two', 'three', 'four']);
 		$.expect(['one', [{}]].flatten()).toEqual(['one', {}]);
 	});
+	
+	var without = ['one', 'one', 'one', 'two', 'one'];
+	$.it('should use .without correctly', function() {
+		$.expect(without.without()).toEqual(without);
+		$.expect(without.without('two').length).toEqual(4);
+		$.expect(without.without('two').indexOf('two')).toEqual(-1);
+		$.expect(without.without('one').length).toEqual(1);
+	});
+	
+	$.it('should use .without with an array correctly', function() {
+		$.expect(without.without(['one'], true)).toEqual(['two']);
+		$.expect(without.without(['one', 'two'], true)).toEqual([]);
+	});
+	
+	$.it('should use .unique correctly', function() {
+		$.expect(without.unique()).toEqual(['one', 'two']);
+		$.expect(['one', 'one'].unique()).toEqual('one');
+	});
 });
