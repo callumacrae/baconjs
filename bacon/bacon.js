@@ -689,3 +689,22 @@ Array.prototype.compact = function() {
 	}
 	return end;
 };
+
+/**
+ * Flattens the array (removes all nesting).
+ *
+ * @returns array Flattened array.
+ */
+Array.prototype.flatten = function() {
+	for (var end = [], i = 0, j; i < this.length; i++) {
+		if (this[i] instanceof Array) {
+			var flat = this[i].flatten();
+			for (j = 0; j < flat.length; j++) {
+				end.push(flat[j]);
+			}
+		} else {
+			end.push(this[i]);
+		}
+	}
+	return end;
+};

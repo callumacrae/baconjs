@@ -69,4 +69,10 @@ $.describe('array prototype test', function() {
 		$.expect([0,-1,2,false].compact()).toEqual([-1,2]);
 		$.expect([false, null].compact()).toEqual([]);
 	});
+
+	$.it('should use .flatten correctly', function() {
+		$.expect(['one', 'two', 'three']).toEqual(['one', 'two', 'three']);
+		$.expect(['one', [['two'], 'three', [[[['four']]]]]].flatten()).toEqual(['one', 'two', 'three', 'four']);
+		$.expect(['one', [{}]].flatten()).toEqual(['one', {}]);
+	});
 });
