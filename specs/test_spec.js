@@ -85,9 +85,8 @@ $.describe('Bacon test tests', function() {
 		$.expect(obj.foo).toBeDefined();
 	});
 
-	$.it('should work .toBeUnDefined correctly', function() {
-		var obj = {};
-		$.expect(obj.foo).toBeUnDefined();
+	$.it('should work .toBeUndefined correctly', function() {
+		$.expect(window.asgojnasgonawg).toBeUndefined();
 	});
 
 	$.it('should work .toBeNull correctly', function() {
