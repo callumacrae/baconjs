@@ -552,3 +552,74 @@ bacon.html.serialise = function(object) {
 	}
 	return (object) ? obj : string.join('&');
 };
+
+
+
+/*****************************************************************************
+ *                                 ARRAY HELPERS
+ ****************************************************************************/
+
+/**
+ * Tests whether the specified value is included in the array.
+ *
+ * @param prop The value to test.
+ * @returns bool Whether it is included or not.
+ */
+Array.prototype.included = function(prop) {
+	return this.indexOf(prop) !== -1;
+};
+
+/**
+ * Finds the maximum value of an array. Supports strings and numbers, but not
+ * both at the same time.
+ *
+ * @param string type The type wanted. If left, will default to the type of the first entry.
+ */
+Array.prototype.max = function(type) {
+	if (typeof type === 'undefined') {
+		type = typeof this[0];
+	}
+
+	for (var i = 0, max = null; i < this.length; i++) {
+		if (typeof this[i] === type && (max === null || this[i] > max)) {
+			max = this[i];
+		}
+	}
+	return max;
+};
+
+/**
+ * Finds the minimum value of an array. Supports strings and numbers, but not
+ * both at the same time.
+ *
+ * @param string type The type wanted. If left, will default to the type of the first entry.
+ */
+Array.prototype.min = function(type) {
+	if (typeof type === 'undefined') {
+		type = typeof this[0];
+	}
+
+	for (var i = 0, min = null; i < this.length; i++) {
+		if (typeof this[i] === type && (min === null || this[i] < min)) {
+			min = this[i];
+		}
+	}
+	return min;
+};
+
+/**
+ * Returns the difference between the minimum and maximum vales of an array.
+ * Supports only numbers.
+ */
+Array.prototype.range = function() {
+	for (var i = 0, min = null, max = null; i < this.length; i++) {
+		if (typeof this[i] === 'number') {
+			if (min === null || this[i] < min) {
+				min = this[i];
+			} else if (max === null || this[i] > max) {
+				max = this[i];
+			}
+		}
+	}
+	return max - min;
+};
