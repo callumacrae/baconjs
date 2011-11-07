@@ -34,6 +34,8 @@ $.describe('helpers tests', function() {
 	});
 
 	$.it('should use .serialise correctly to objects', function() {
-		$.expect($('#foobarform').serialise(true)).toEqual({foo: 'bar', bar: 'fooo'});
+		var form = $('#foobarform').serialise(true);
+		$.expect(form.bar).toEqual('fooo');
+		$.expect(form.foo).toEqual('bar');
 	});
 });
