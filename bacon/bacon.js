@@ -457,17 +457,15 @@ bacon.post = function(url, data, callback) {
 
 // Data helper
 bacon.html.data = function(get, set) {
-	if (typeof set === 'undefined' && this.elements[0].dataset) {
-		return this.elements[0].dataset[get];
+	if (typeof set === 'undefined') {
+		return (this.elements[0].dataset) ? this.elements[0].dataset[get] : null;
 	}
 
 	this.each(function() {
-		if (this.dataset) {
-			this.dataset[get] = set;
-		} else {
+		if (!this.dataset) {
 			this.dataset = {};
-			return $(this).data(get, set);
 		}
+		this.dataset[get] = set;
 	});
 	return this;
 };
