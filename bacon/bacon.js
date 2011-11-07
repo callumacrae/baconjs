@@ -674,3 +674,18 @@ Array.prototype.rand = Array.prototype.random = function(limit) {
 		return end;
 	}
 };
+
+/**
+ * Removes all falsey values from an Array.
+ *
+ * @return array Array with all falsey values removed.
+ */
+Array.prototype.compact = function() {
+	var end = [], i;
+	for (i = 0; i < this.length; i++) {
+		if (this[i]) {
+			end.push(this[i]);
+		}
+	}
+	return end;
+};

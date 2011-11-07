@@ -63,4 +63,10 @@ $.describe('array prototype test', function() {
 		$.expect(typeof rand_ary.rand(1)[0]).toEqual('number');
 		$.expect(rand_ary.rand(3).length).toEqual(3);
 	});
+
+	$.it('should use .compact correctly', function() {
+		$.expect([0,1,2,false].compact()).toEqual([1,2]);
+		$.expect([0,-1,2,false].compact()).toEqual([-1,2]);
+		$.expect([false, null].compact()).toEqual([]);
+	});
 });
