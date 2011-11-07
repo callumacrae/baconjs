@@ -1,4 +1,12 @@
 $.describe('array prototype test', function() {
+	$.it('should not have enabled itself', function() {
+		$.expect([].included).toBeUndefined();
+	});
+	
+	$.it('should enable successfully', function() {
+		$.expect($.enableArrayFeatures()).toEqual(true);
+	});
+	
 	$.it('should use .included correctly', function() {
 		$.expect(['one', 'two', 'three'].included('one')).toEqual(true);
 		$.expect(['one', 'two', 'three'].included('four')).toEqual(false);

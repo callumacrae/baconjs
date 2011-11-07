@@ -560,187 +560,195 @@ bacon.html.serialise = function(object) {
  ****************************************************************************/
 
 /**
- * Tests whether the specified value is included in the array.
- *
- * @param prop The value to test.
- * @returns bool Whether it is included or not.
+ * Enables the bacon array features.
  */
-Array.prototype.included = function(prop) {
-	return this.indexOf(prop) !== -1;
-};
+bacon.enableArrayFeatures = function() {
 
-/**
- * Finds the maximum value of an array. Supports strings and numbers, but not
- * both at the same time.
- *
- * @param string type The type wanted. If left, will default to the type of the first entry.
- */
-Array.prototype.max = function(type) {
-	if (typeof type === 'undefined') {
-		type = typeof this[0];
-	}
-
-	for (var i = 0, max = null; i < this.length; i++) {
-		if (typeof this[i] === type && (max === null || this[i] > max)) {
-			max = this[i];
+	/**
+	 * Tests whether the specified value is included in the array.
+	 *
+	 * @param prop The value to test.
+	 * @returns bool Whether it is included or not.
+	 */
+	Array.prototype.included = function(prop) {
+		return this.indexOf(prop) !== -1;
+	};
+	
+	/**
+	 * Finds the maximum value of an array. Supports strings and numbers, but not
+	 * both at the same time.
+	 *
+	 * @param string type The type wanted. If left, will default to the type of the first entry.
+	 */
+	Array.prototype.max = function(type) {
+		if (typeof type === 'undefined') {
+			type = typeof this[0];
 		}
-	}
-	return max;
-};
-
-/**
- * Finds the minimum value of an array. Supports strings and numbers, but not
- * both at the same time.
- *
- * @param string type The type wanted. If left, will default to the type of the first entry.
- */
-Array.prototype.min = function(type) {
-	if (typeof type === 'undefined') {
-		type = typeof this[0];
-	}
-
-	for (var i = 0, min = null; i < this.length; i++) {
-		if (typeof this[i] === type && (min === null || this[i] < min)) {
-			min = this[i];
-		}
-	}
-	return min;
-};
-
-/**
- * Returns the difference between the minimum and maximum vales of an array.
- * Supports only numbers.
- */
-Array.prototype.range = function() {
-	for (var i = 0, min = null, max = null; i < this.length; i++) {
-		if (typeof this[i] === 'number') {
-			if (min === null || this[i] < min) {
-				min = this[i];
-			} else if (max === null || this[i] > max) {
+	
+		for (var i = 0, max = null; i < this.length; i++) {
+			if (typeof this[i] === type && (max === null || this[i] > max)) {
 				max = this[i];
 			}
 		}
-	}
-	return max - min;
-};
-
-/**
- * Groups items from the array by the returned value of the callback.
- *
- * @param function sortBy The function to query.
- * @returns object Object of the grouped array items.
- */
-Array.prototype.groupBy = function(sortBy) {
-	for (var a, obj = {}, i = 0; i < this.length; i++) {
-		a = sortBy(this[i]);
-		if (!obj[a]) {
-			obj[a] = [];
+		return max;
+	};
+	
+	/**
+	 * Finds the minimum value of an array. Supports strings and numbers, but not
+	 * both at the same time.
+	 *
+	 * @param string type The type wanted. If left, will default to the type of the first entry.
+	 */
+	Array.prototype.min = function(type) {
+		if (typeof type === 'undefined') {
+			type = typeof this[0];
 		}
-		obj[a].push(this[i]);
-	}
-	return obj;
-};
-
-/**
- * Shufles the array.
- *
- * @returns array The shuffled array.
- */
-Array.prototype.shuffle = function() {
-	var end = [], clone = this.slice();
-	while (clone.length > 0) {
-		end = end.concat(clone.splice(Math.floor(Math.random() * clone.length), 1));
-	}
-	return end;
-}
-
-/**
- * Returns a random item or selection of items from the array.
- *
- * @param number limit The number of elements to return.
- * @returns array The items. Will not be an array if limit is not specified.
- */
-Array.prototype.rand = Array.prototype.random = function(limit) {
-	if (typeof limit !== 'number') {
-		return this[Math.floor(Math.random() * this.length)];
-	} else {
-		if (limit > this.length) {
-			throw new Error('Cannot return more items than the array contains.');
+	
+		for (var i = 0, min = null; i < this.length; i++) {
+			if (typeof this[i] === type && (min === null || this[i] < min)) {
+				min = this[i];
+			}
 		}
+		return min;
+	};
+	
+	/**
+	 * Returns the difference between the minimum and maximum vales of an array.
+	 * Supports only numbers.
+	 */
+	Array.prototype.range = function() {
+		for (var i = 0, min = null, max = null; i < this.length; i++) {
+			if (typeof this[i] === 'number') {
+				if (min === null || this[i] < min) {
+					min = this[i];
+				} else if (max === null || this[i] > max) {
+					max = this[i];
+				}
+			}
+		}
+		return max - min;
+	};
+	
+	/**
+	 * Groups items from the array by the returned value of the callback.
+	 *
+	 * @param function sortBy The function to query.
+	 * @returns object Object of the grouped array items.
+	 */
+	Array.prototype.groupBy = function(sortBy) {
+		for (var a, obj = {}, i = 0; i < this.length; i++) {
+			a = sortBy(this[i]);
+			if (!obj[a]) {
+				obj[a] = [];
+			}
+			obj[a].push(this[i]);
+		}
+		return obj;
+	};
+	
+	/**
+	 * Shufles the array.
+	 *
+	 * @returns array The shuffled array.
+	 */
+	Array.prototype.shuffle = function() {
 		var end = [], clone = this.slice();
-		while (end.length < limit) {
+		while (clone.length > 0) {
 			end = end.concat(clone.splice(Math.floor(Math.random() * clone.length), 1));
 		}
 		return end;
 	}
-};
-
-/**
- * Removes all falsey values from an Array.
- *
- * @return array Array with all falsey values removed.
- */
-Array.prototype.compact = function() {
-	var end = [], i;
-	for (i = 0; i < this.length; i++) {
-		if (this[i]) {
-			end.push(this[i]);
-		}
-	}
-	return end;
-};
-
-/**
- * Flattens the array (removes all nesting).
- *
- * @returns array Flattened array.
- */
-Array.prototype.flatten = function() {
-	for (var end = [], i = 0, j; i < this.length; i++) {
-		if (this[i] instanceof Array) {
-			var flat = this[i].flatten();
-			for (j = 0; j < flat.length; j++) {
-				end.push(flat[j]);
-			}
+	
+	/**
+	 * Returns a random item or selection of items from the array.
+	 *
+	 * @param number limit The number of elements to return.
+	 * @returns array The items. Will not be an array if limit is not specified.
+	 */
+	Array.prototype.rand = Array.prototype.random = function(limit) {
+		if (typeof limit !== 'number') {
+			return this[Math.floor(Math.random() * this.length)];
 		} else {
-			end.push(this[i]);
+			if (limit > this.length) {
+				throw new Error('Cannot return more items than the array contains.');
+			}
+			var end = [], clone = this.slice();
+			while (end.length < limit) {
+				end = end.concat(clone.splice(Math.floor(Math.random() * clone.length), 1));
+			}
+			return end;
 		}
-	}
-	return end;
-};
-
-/**
- * Removes all instances of value or an array of values.
- *
- * @param value The value / values to remove.
- * @param bool array If true, will treat value as an array of values.
- * @returns array The array without the values.
- */
-Array.prototype.without = function(value, array) {
-	if (typeof array === 'undefined' || !array) {
-		value = [value];
-	}
-
-	for (var clone = this.slice(), i = 0; i < value.length; i++) {
-		while (clone.indexOf(value[i]) !== -1) {
-			clone.splice(clone.indexOf(value[i]), 1);
+	};
+	
+	/**
+	 * Removes all falsey values from an Array.
+	 *
+	 * @return array Array with all falsey values removed.
+	 */
+	Array.prototype.compact = function() {
+		var end = [], i;
+		for (i = 0; i < this.length; i++) {
+			if (this[i]) {
+				end.push(this[i]);
+			}
 		}
-	}
-
-	return clone;
-};
-
-/**
- * Returns the array without all duplicate entries removed.
- *
- * @returns array The array without the duplicates.
- */
-Array.prototype.unique = function() {
-	for (var i = 0, clone = this.slice(); i < clone.length; i++) {
-		if (clone.indexOf(clone[i]) < i) {
-			clone.splice(i, 1);
-			i--;
+		return end;
+	};
+	
+	/**
+	 * Flattens the array (removes all nesting).
+	 *
+	 * @returns array Flattened array.
+	 */
+	Array.prototype.flatten = function() {
+		for (var end = [], i = 0, j; i < this.length; i++) {
+			if (this[i] instanceof Array) {
+				var flat = this[i].flatten();
+				for (j = 0; j < flat.length; j++) {
+					end.push(flat[j]);
+				}
+			} else {
+				end.push(this[i]);
+			}
 		}
-	}
-	return clone;
+		return end;
+	};
+	
+	/**
+	 * Removes all instances of value or an array of values.
+	 *
+	 * @param value The value / values to remove.
+	 * @param bool array If true, will treat value as an array of values.
+	 * @returns array The array without the values.
+	 */
+	Array.prototype.without = function(value, array) {
+		if (typeof array === 'undefined' || !array) {
+			value = [value];
+		}
+	
+		for (var clone = this.slice(), i = 0; i < value.length; i++) {
+			while (clone.indexOf(value[i]) !== -1) {
+				clone.splice(clone.indexOf(value[i]), 1);
+			}
+		}
+	
+		return clone;
+	};
+	
+	/**
+	 * Returns the array without all duplicate entries removed.
+	 *
+	 * @returns array The array without the duplicates.
+	 */
+	Array.prototype.unique = function() {
+		for (var i = 0, clone = this.slice(); i < clone.length; i++) {
+			if (clone.indexOf(clone[i]) < i) {
+				clone.splice(i, 1);
+				i--;
+			}
+		}
+		return clone;
+	};
+	
+	return true;
 };
