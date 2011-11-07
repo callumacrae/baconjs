@@ -623,3 +623,14 @@ Array.prototype.range = function() {
 	}
 	return max - min;
 };
+
+Array.prototype.groupBy = function(sortBy) {
+	for (var a, obj = {}, i = 0; i < this.length; i++) {
+		a = sortBy(this[i]);
+		if (!obj[a]) {
+			obj[a] = [];
+		}
+		obj[a].push(this[i]);
+	}
+	return obj;
+}

@@ -43,4 +43,11 @@ $.describe('array prototype test', function() {
 		$.expect([5,-2,7,1].range()).toEqual(9);
 		$.expect(['test',-2,7,1].range()).toEqual(9);
 	});
+
+	$.it('should use .groupBy correctly', function() {
+		var group = [1.5, 2.3, 2.6, 3.3, 3.6].groupBy(function(num) {
+			return Math.floor(num);
+		});
+		$.expect(group).toEqual({1: [1.5], 2: [2.3, 2.6], 3: [3.3, 3.6]});
+	})
 });
