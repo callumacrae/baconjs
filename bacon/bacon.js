@@ -624,6 +624,12 @@ Array.prototype.range = function() {
 	return max - min;
 };
 
+/**
+ * Groups items from the array by the returned value of the callback.
+ *
+ * @param function sortBy The function to query.
+ * @returns object Object of the grouped array items.
+ */
 Array.prototype.groupBy = function(sortBy) {
 	for (var a, obj = {}, i = 0; i < this.length; i++) {
 		a = sortBy(this[i]);
@@ -633,4 +639,38 @@ Array.prototype.groupBy = function(sortBy) {
 		obj[a].push(this[i]);
 	}
 	return obj;
+};
+
+/**
+ * Shufles the array.
+ *
+ * @returns array The shuffled array.
+ */
+Array.prototype.shuffle = function() {
+	var end = [], clone = this.slice();
+	while (clone.length > 0) {
+		end = end.concat(clone.splice(Math.floor(Math.random() * clone.length), 1));
+	}
+	return end;
 }
+
+/**
+ * Returns a random item or selection of items from the array.
+ *
+ * @param number limit The number of elements to return.
+ * @returns array The items. Will not be an array if limit is not specified.
+ */
+Array.prototype.rand = Array.prototype.random = function(limit) {
+	if (typeof limit !== 'number') {
+		return this[Math.floor(Math.random() * this.length)];
+	} else {
+		if (limit > this.length) {
+			throw new Error('Cannot return more items than the array contains.');
+		}
+		var end = [], clone = this.slice();
+		while (end.length < limit) {
+			end = end.concat(clone.splice(Math.floor(Math.random() * clone.length), 1));
+		}
+		return end;
+	}
+};

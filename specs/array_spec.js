@@ -49,5 +49,18 @@ $.describe('array prototype test', function() {
 			return Math.floor(num);
 		});
 		$.expect(group).toEqual({1: [1.5], 2: [2.3, 2.6], 3: [3.3, 3.6]});
-	})
+	});
+
+	var rand_ary = [0,1,2,3,4,5,6,7,8,9]
+	$.it('should use .shuffle correctly', function() {
+		$.expect(rand_ary.shuffle()).toNotEqual(rand_ary);
+		$.expect(rand_ary.shuffle()).toNotBe(rand_ary);
+		$.expect(rand_ary.shuffle().length).toEqual(10);
+	});
+
+	$.it('should use .random correctly', function() {
+		$.expect(typeof rand_ary.rand()).toEqual('number');
+		$.expect(typeof rand_ary.rand(1)[0]).toEqual('number');
+		$.expect(rand_ary.rand(3).length).toEqual(3);
+	});
 });
