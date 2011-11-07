@@ -79,14 +79,15 @@ bacon.runTests = function(output_div) {
 
 			if (bacon._currentTestData[j][2]) {
 				contin2 = false;
-				var time = bacon._currentTestData[j][2]
-				setInterval(function() {
+				var time = bacon._currentTestData[j][2];
+				var time2 = setTimeout(function() {
 					bacon._currentTest.push('Timeout');
 					contin2 = true;
 				}, typeof time === 'number' ? time : bacon._asyncTestTimeout);
 			}
 
 			bacon._currentTestData[j][1].call(null, function() {
+				clearInterval(time2);
 				contin2 = true;
 			});
 
