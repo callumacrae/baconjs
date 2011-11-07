@@ -3,7 +3,7 @@ $.describe('AJAX tests', function() {
 		$.req('GET', '/ajaxtest', 'foo=bar', function(res) {
 			$.expect(res).toEqual({
 				method: 'GET',
-				GET: $.qs('foo=bar'),
+				GET: {foo: 'bar'},
 				POST: []
 			});
 			done();
