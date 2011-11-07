@@ -455,7 +455,13 @@ bacon.post = function(url, data, callback) {
  *                                         HELPERS
  ****************************************************************************/
 
-// Data helper
+/**
+ * Data helper: attaches data to an element to be retrieved later. Also can retrieve
+ * the data. Uses data attributes if the dataset object is available.
+ *
+ * @param string get The name of the data to store.
+ * @param set The data to store. Can be any type.
+ */
 bacon.html.data = function(get, set) {
 	if (typeof set === 'undefined') {
 		return (this.elements[0].dataset) ? this.elements[0].dataset[get] : null;
@@ -471,7 +477,17 @@ bacon.html.data = function(get, set) {
 };
 
 
-// Querystring helper
+/**
+ * Querystring helper: Converts querystrings to objects and back.
+ *
+ * @param string query The querystring to be converted.
+ * @returns object The converted object.
+ *
+ * OR:
+ *
+ * @param object query The object to be converted.
+ * @returns string The converted querystring.
+ */
 bacon.querystring = bacon.qs = function(query) {
 	if (typeof query === 'object') {
 		// Convert from object to string
@@ -513,7 +529,11 @@ bacon.querystring = bacon.qs = function(query) {
 	}
 };
 
-// Form helper
+/**
+ * Form helper: serialises form into a querystring or object.
+ *
+ * @param bool object If true, will return an object.
+ */
 bacon.html.serialise = function(object) {
 	if (this.elements[0].tagName !== 'FORM') {
 		throw new Error('You can only serialise forms.');
