@@ -27,27 +27,27 @@ bacon.runTests = function(output_div) {
 			clearInterval(interval);
 			var errors, html = '', lastTestDesc = bacon._testResults[0].desc, lastDiv = '',
 				result, results = bacon._testResults, success;
-				
+
 			for (i = 0; i < bacon._testResults.length; i++) {
 				result = bacon._testResults[i];
-				
+
 				// If different group of tests, output the previous one and start a new one
 				if (result.desc !== lastTestDesc) {
 					html += '<div class="testgroup"><h2>' + lastTestDesc + '</h2>' + lastDiv + '</div>';
 					lastTestDesc = result.desc;
 					lastDiv = '';
 				}
-				
+
 				success = true;
 				errors = [];
-				
+
 				for (j = 0; j < result.results.length; j++) {
 					if (result.results[j] !== true) {
 						success = false;
 						errors.push('<strong>' + result.results[j] + '</strong>');
 					}
 				}
-				
+
 				success = (success) ? 'success' : 'failure';
 				errors = errors.join('<br />');
 				lastDiv += '<div class="test ' + success + '"><p>' + result.it + '</p>' + errors + '</div>';
@@ -56,27 +56,27 @@ bacon.runTests = function(output_div) {
 			output_div.elements[0].innerHTML = html;
 			return;
 		}
-		
+
 		bacon._currentTestData = [];
 		bacon._testData[i][1].call();
-		
+
 		j = -1;
-		
+
 		contin = false;
-		
+
 		interval2 = setInterval(function() {
 			if (!contin2) {
 				return;
 			}
-			
+
 			if (++j >= bacon._currentTestData.length) {
 				clearInterval(interval2);
 				contin = true;
 				return;
 			}
-			
+
 			bacon._currentTest = [];
-			
+
 			if (bacon._currentTestData[j][2]) {
 				contin2 = false;
 				var time = bacon._currentTestData[j][2]
@@ -85,11 +85,11 @@ bacon.runTests = function(output_div) {
 					contin2 = true;
 				}, typeof time === 'number' ? time : bacon._asyncTestTimeout);
 			}
-			
+
 			bacon._currentTestData[j][1].call(null, function() {
 				contin2 = true;
 			});
-			
+
 			bacon._testResults.push({
 				desc: bacon._testData[i][0],
 				it: bacon._currentTestData[j][0],
@@ -156,7 +156,7 @@ BaconTest.prototype.toMatch = function(value) {
 	if (!(value instanceof RegExp)) {
 		value = new RegExp(value);
 	}
-	
+
 	value = value.test(this.input) ? true : 'Expected ' + this.input + ' to match ' + value + '.';
 	bacon._currentTest.push(value);
 };
@@ -165,7 +165,7 @@ BaconTest.prototype.toNotMatch = function(value) {
 	if (!(value instanceof RegExp)) {
 		value = new RegExp(value);
 	}
-	
+
 	value = value.test(this.input) ? 'Expected ' + this.input + ' to not match ' + value + '.' : true;
 	bacon._currentTest.push(value);
 };
