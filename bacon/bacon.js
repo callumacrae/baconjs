@@ -573,7 +573,7 @@ bacon.enableArrayFeatures = function() {
 	Array.prototype.included = function(prop) {
 		return this.indexOf(prop) !== -1;
 	};
-	
+
 	/**
 	 * Finds the maximum value of an array. Supports strings and numbers, but not
 	 * both at the same time.
@@ -584,7 +584,7 @@ bacon.enableArrayFeatures = function() {
 		if (typeof type === 'undefined') {
 			type = typeof this[0];
 		}
-	
+
 		for (var i = 0, max = null; i < this.length; i++) {
 			if (typeof this[i] === type && (max === null || this[i] > max)) {
 				max = this[i];
@@ -592,7 +592,7 @@ bacon.enableArrayFeatures = function() {
 		}
 		return max;
 	};
-	
+
 	/**
 	 * Finds the minimum value of an array. Supports strings and numbers, but not
 	 * both at the same time.
@@ -603,7 +603,7 @@ bacon.enableArrayFeatures = function() {
 		if (typeof type === 'undefined') {
 			type = typeof this[0];
 		}
-	
+
 		for (var i = 0, min = null; i < this.length; i++) {
 			if (typeof this[i] === type && (min === null || this[i] < min)) {
 				min = this[i];
@@ -611,7 +611,7 @@ bacon.enableArrayFeatures = function() {
 		}
 		return min;
 	};
-	
+
 	/**
 	 * Returns the difference between the minimum and maximum vales of an array.
 	 * Supports only numbers.
@@ -628,7 +628,7 @@ bacon.enableArrayFeatures = function() {
 		}
 		return max - min;
 	};
-	
+
 	/**
 	 * Groups items from the array by the returned value of the callback.
 	 *
@@ -645,7 +645,7 @@ bacon.enableArrayFeatures = function() {
 		}
 		return obj;
 	};
-	
+
 	/**
 	 * Shufles the array.
 	 *
@@ -658,7 +658,7 @@ bacon.enableArrayFeatures = function() {
 		}
 		return end;
 	}
-	
+
 	/**
 	 * Returns a random item or selection of items from the array.
 	 *
@@ -679,7 +679,7 @@ bacon.enableArrayFeatures = function() {
 			return end;
 		}
 	};
-	
+
 	/**
 	 * Removes all falsey values from an Array.
 	 *
@@ -694,7 +694,7 @@ bacon.enableArrayFeatures = function() {
 		}
 		return end;
 	};
-	
+
 	/**
 	 * Flattens the array (removes all nesting).
 	 *
@@ -713,7 +713,7 @@ bacon.enableArrayFeatures = function() {
 		}
 		return end;
 	};
-	
+
 	/**
 	 * Removes all instances of value or an array of values.
 	 *
@@ -725,16 +725,16 @@ bacon.enableArrayFeatures = function() {
 		if (typeof array === 'undefined' || !array) {
 			value = [value];
 		}
-	
+
 		for (var clone = this.slice(), i = 0; i < value.length; i++) {
 			while (clone.indexOf(value[i]) !== -1) {
 				clone.splice(clone.indexOf(value[i]), 1);
 			}
 		}
-	
+
 		return clone;
 	};
-	
+
 	/**
 	 * Returns the array without all duplicate entries removed.
 	 *
@@ -749,6 +749,46 @@ bacon.enableArrayFeatures = function() {
 		}
 		return clone;
 	};
-	
+
 	return true;
 };
+
+
+
+/*****************************************************************************
+ *                                    ANIMATIONS
+ ****************************************************************************/
+
+bacon._defaultAnimTime = 400;
+bacon.html.fadeOut = function(time, cb) {
+	if (typeof time === 'function') {
+		cb = time;
+		time = bacon._defaultAnimTime;
+	} else if (typeof time === 'undefined') {
+		time = bacon._defaultAnimTime;
+	}
+
+	var called = false;
+
+	this.each(function() {
+		var start = (this.style.opacity) ? this.style.opacity : 1;
+		var change = start / (time / 4);
+		var i = 0;
+		var that = this;
+		var interval = setInterval(function() {
+			that.style.opacity = 1 - (i * change);
+			if (i++ >= time / 4) {
+				clearInterval(interval);
+				if (!called && typeof cb === 'function') {
+					called = true;
+					cb.call();
+				}
+			}
+		}, 4);
+	});
+
+	/*setInterval(function() {
+
+	}, 1);
+	var start, interval;*/
+}
