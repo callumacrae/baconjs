@@ -794,7 +794,7 @@ bacon.html.fadeIn = function(time, cb) {
 
 	setTimeout(function() {
 		cb.call(orig);
-	}, time + 1);
+	}, time + 4);
 };
 
 /**
@@ -830,5 +830,5 @@ bacon.html.fadeOut = function(time, cb) {
 
 	setTimeout(function() {
 		cb.call(orig);
-	}, time + 1);
+	}, time + 4);
 };
