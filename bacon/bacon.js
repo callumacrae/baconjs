@@ -760,6 +760,13 @@ bacon.enableArrayFeatures = function() {
  ****************************************************************************/
 
 bacon._defaultAnimTime = 400;
+
+/**
+ * Fades out an element / group of elements.
+ *
+ * @param int time Time to fade it out over (optional).
+ * @param func cb Callback to call when fadeOut has completed.
+ */
 bacon.html.fadeOut = function(time, cb) {
 	if (typeof time === 'function') {
 		cb = time;
@@ -768,27 +775,24 @@ bacon.html.fadeOut = function(time, cb) {
 		time = bacon._defaultAnimTime;
 	}
 
-	var called = false;
+	var called = false, startTime = Date.now(), orig = this;
 
 	this.each(function() {
-		var start = (this.style.opacity) ? this.style.opacity : 1;
-		var change = start / (time / 4);
-		var i = 0;
-		var that = this;
+		var start = (this.style.opacity) ? this.style.opacity : 1, that = this;
+
+		if (start === '0') {
+			return;
+		}
+
 		var interval = setInterval(function() {
-			that.style.opacity = 1 - (i * change);
-			if (i++ >= time / 4) {
+			that.style.opacity = 1 - ((Date.now() - startTime) * start / time);
+			if (that.style.opacity <= 0 && !(that.style.opacity = 0)) {
 				clearInterval(interval);
 				if (!called && typeof cb === 'function') {
 					called = true;
-					cb.call();
+					cb.call(orig);
 				}
 			}
 		}, 4);
 	});
-
-	/*setInterval(function() {
-
-	}, 1);
-	var start, interval;*/
-}
+};
