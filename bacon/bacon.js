@@ -775,7 +775,7 @@ bacon.html.fadeIn = function(time, cb) {
 		time = bacon._defaultAnimTime;
 	}
 
-	var called = false, startTime = Date.now(), orig = this;
+	var startTime = Date.now(), orig = this;
 
 	this.each(function() {
 		var start = (this.style.opacity) ? this.style.opacity : '1', that = this;
@@ -788,13 +788,13 @@ bacon.html.fadeIn = function(time, cb) {
 			that.style.opacity = ((Date.now() - startTime) * (1 - start) / time);
 			if (that.style.opacity >= 1 && (that.style.opacity = 1)) {
 				clearInterval(interval);
-				if (!called && typeof cb === 'function') {
-					called = true;
-					cb.call(orig);
-				}
 			}
 		}, 4);
 	});
+
+	setTimeout(function() {
+		cb.call(orig);
+	}, time + 1);
 };
 
 /**
@@ -811,10 +811,10 @@ bacon.html.fadeOut = function(time, cb) {
 		time = bacon._defaultAnimTime;
 	}
 
-	var called = false, startTime = Date.now(), orig = this;
+	var startTime = Date.now(), orig = this;
 
 	this.each(function() {
-		var start = (this.style.opacity) ? this.style.opacity : 1, that = this;
+		var start = ((this.style.opacity) ? this.style.opacity : 1), that = this;
 
 		if (start === '0') {
 			return;
@@ -824,11 +824,11 @@ bacon.html.fadeOut = function(time, cb) {
 			that.style.opacity = 1 - ((Date.now() - startTime) * start / time);
 			if (that.style.opacity <= 0 && !(that.style.opacity = 0)) {
 				clearInterval(interval);
-				if (!called && typeof cb === 'function') {
-					called = true;
-					cb.call(orig);
-				}
 			}
 		}, 4);
 	});
+
+	setTimeout(function() {
+		cb.call(orig);
+	}, time + 1);
 };
