@@ -132,14 +132,14 @@ BaconTest.prototype._compare = function(input, value) {
 };
 
 BaconTest.prototype.toEqual = function(value) {
-	value = BaconTest.prototype._compare(this.input, value);
-	value = value ? true : 'Expected ' + value + ' to equal ' + this.input;
+	var new_value = BaconTest.prototype._compare(this.input, value);
+	value = new_value ? true : 'Expected ' + value + ' to equal ' + this.input;
 	bacon._currentTest.push(value);
 };
 
 BaconTest.prototype.toNotEqual = function(value) {
-	value = !BaconTest.prototype._compare(this.input, value);
-	value = value ? true : 'Expected ' + value + ' to not equal ' + this.input;
+	var new_value = !BaconTest.prototype._compare(this.input, value);
+	value = new_value ? true : 'Expected ' + value + ' to not equal ' + this.input;
 	bacon._currentTest.push(value);
 };
 
