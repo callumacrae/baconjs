@@ -762,10 +762,46 @@ bacon.enableArrayFeatures = function() {
 bacon._defaultAnimTime = 400;
 
 /**
+ * Fades in an element / group of elements.
+ *
+ * @param int time Time to fade it in over (optional).
+ * @param func cb Callback to call when fadeIn has completed (optional).
+ */
+bacon.html.fadeIn = function(time, cb) {
+	if (typeof time === 'function') {
+		cb = time;
+		time = bacon._defaultAnimTime;
+	} else if (typeof time === 'undefined') {
+		time = bacon._defaultAnimTime;
+	}
+
+	var called = false, startTime = Date.now(), orig = this;
+
+	this.each(function() {
+		var start = (this.style.opacity) ? this.style.opacity : '1', that = this;
+
+		if (start === '1') {
+			return;
+		}
+
+		var interval = setInterval(function() {
+			that.style.opacity = ((Date.now() - startTime) * (1 - start) / time);
+			if (that.style.opacity >= 1 && (that.style.opacity = 1)) {
+				clearInterval(interval);
+				if (!called && typeof cb === 'function') {
+					called = true;
+					cb.call(orig);
+				}
+			}
+		}, 4);
+	});
+};
+
+/**
  * Fades out an element / group of elements.
  *
  * @param int time Time to fade it out over (optional).
- * @param func cb Callback to call when fadeOut has completed.
+ * @param func cb Callback to call when fadeOut has completed (optional).
  */
 bacon.html.fadeOut = function(time, cb) {
 	if (typeof time === 'function') {
