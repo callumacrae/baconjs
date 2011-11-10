@@ -107,4 +107,10 @@ $.describe('Bacon test tests', function() {
 		$.expect(null).toBeFalsy();
 		$.expect(NaN).toBeFalsy();
 	});
+
+	$.it('should catch errors with .toThrow correctly', function() {
+		$.expect(function() {
+			aong;
+		}).toThrow('not_defined');
+	});
 });

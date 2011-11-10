@@ -69,6 +69,7 @@ bacon.runTests = function(output_div) {
 				return;
 			}
 
+			bacon._testErrorType = false;
 			if (++j >= bacon._currentTestData.length) {
 				clearInterval(interval2);
 				contin = true;
@@ -86,10 +87,20 @@ bacon.runTests = function(output_div) {
 				}, typeof time === 'number' ? time : bacon._asyncTestTimeout);
 			}
 
-			bacon._currentTestData[j][1].call(null, function() {
+			try {
+				bacon._currentTestData[j][1].call(null, function() {
+					clearInterval(time2);
+					contin2 = true;
+				});
+			} catch (err) {
+				if (err.type === bacon._testErrorType) {
+					bacon._currentTest.push(true);
+				} else {
+					bacon._currentTest.push(err.message);
+				}
 				clearInterval(time2);
 				contin2 = true;
-			});
+			}
 
 			bacon._testResults.push({
 				desc: bacon._testData[i][0],
@@ -209,4 +220,9 @@ BaconTest.prototype.toBeTruthy = function() {
 
 BaconTest.prototype.toBeFalsy = function() {
 	bacon._currentTest.push((this.input) ? 'Expected ' + this.input + ' to be falsy' : true);
+};
+
+BaconTest.prototype.toThrow = function(type) {
+	bacon._testErrorType = type;
+	this.input.call();
 };
