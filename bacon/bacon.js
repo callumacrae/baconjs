@@ -401,7 +401,7 @@ bacon.req = function(method, url, data, callback) {
 		if (req.readyState === 4 && req.status === 200) {
 			req.body = req.responseText;
 			if (req.getResponseHeader('Content-type') === 'application/json') {
-				callback(JSON.parse(req.responseText));
+				callback(JSON.parse(req.responseText), req);
 			} else {
 				callback(req.responseText, req)
 			}
