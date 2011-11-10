@@ -1,8 +1,13 @@
 bacon._testData = [];
 bacon._asyncTestTimeout = 400;
 
+var url = window.location.search.split('=');
+url = (url.length > 1) ? url[1].replace(/%20/g, ' ') : false;
+
 bacon.describe = function(desc, fn) {
-	bacon._testData.push([desc, fn]);
+	if (!url || url === desc) {
+		bacon._testData.push([desc, fn]);
+	}
 };
 
 bacon.it = function(desc, fn, async) {
@@ -54,6 +59,9 @@ bacon.runTests = function(output_div) {
 			}
 			html += '<div class="testgroup"><h2>' + lastTestDesc + '</h2>' + lastDiv + '</div>';
 			output_div.elements[0].innerHTML = html;
+			$('.testgroup h2').on('click', function() {
+				window.location = '?test=' + this.innerHTML.replace(/ /g, '%20');
+			});
 			return;
 		}
 
