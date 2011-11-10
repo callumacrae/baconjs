@@ -385,15 +385,17 @@ bacon.req = function(method, url, data, callback) {
 		data = bacon.querystring(data);
 	}
 
-	if (method === 'GET' && typeof data === 'string') {
-		url += '?' + data;
-		delete data;
-	}
-
 	if (window.XMLHttpRequest) {
 		req = new XMLHttpRequest();
 	} else {
 		req = new ActiveXObject('Microsoft.XMLHTTP');
+	}
+
+	if (method === 'GET' && typeof data === 'string') {
+		url += '?' + data;
+		delete data;
+	} else if (typeof data === 'string') {
+		req.setRequestHeader('application/x-www-form-urlencoded');
 	}
 
 	req.open(method, url, true);
@@ -412,7 +414,7 @@ bacon.req = function(method, url, data, callback) {
 			throw new Error('XHR Request failed: ' + req.status);
 		}
 	};
-	req.send((typeof data === 'string') ? data + '\n': null);
+	req.send((typeof data === 'string') ? data : null);
 };
 
 /**
