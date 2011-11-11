@@ -15,6 +15,46 @@ $.describe('bacon event tests', function() {
 		}).trigger('click'); // We tested .trigger in the previous test, it is safe to use
 	}, true);
 
+	var clicks = 0;
+	$.it('should handle .live correctly', function(done) {
+		$('p').live('click', function() {
+			$.expect(this).toBe($('p', 1).elements[0]);
+			clicks++;
+			done();
+		});
+		$('p', 1).trigger('click');
+		$.expect(clicks).toEqual(1);
+	}, true);
+
+	$.it('should handle .unlive correctly', function() {
+		$('p').unlive('click');
+		$('p', 1).trigger('click');
+		$.expect(clicks).toEqual(1);
+	});
+
+	$.it('should handle .unlive correctly with function specified', function() {
+		var cb = function() {
+			clicks++;
+		}
+		$('p').live('click', cb);
+		$('p', 1).trigger('click');
+		$.expect(clicks).toEqual(2);
+		$('p').unlive('click', cb);
+		$('p', 1).trigger('click');
+		$.expect(clicks).toEqual(2);
+	});
+
+	$.it('should handle .unlive correctly with nothing specified', function() {
+		$('p').live('click', function() {
+			clicks++;
+		});
+		$('p', 1).trigger('click');
+		$.expect(clicks).toEqual(3);
+		$('p').unlive();
+		$('p', 1).trigger('click');
+		$.expect(clicks).toEqual(3);
+	});
+
 	$.it('should handle .removeHandler correctly', function() {
 		var clicks = 0;
 		var cb = function() {

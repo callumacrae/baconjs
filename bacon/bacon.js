@@ -1,11 +1,17 @@
 function BaconObj() {};
 
 var $, bacon = $ = function(selector, limit) {
+	if (selector instanceof BaconObj) {
+		console.log('debug: BaconObj passed to BaconObj.');
+		return selector;
+	}
+
 	var elements = new BaconObj();
 	if (typeof selector === 'object') {
 		elements.elements = (selector instanceof Array) ? selector : [selector];
 		elements.length = elements.elements.length;
 	} else {
+		elements.selector = selector;
 		elements.elements = [document];
 		elements.select(selector, limit);
 	}
@@ -36,6 +42,7 @@ bacon.html.select = function(selector, limit) {
 	}
 	this.elements = elements;
 	this.length = this.elements.length;
+	this.selector = selector;
 	return this;
 };
 
@@ -304,6 +311,57 @@ bacon.html.on = function(event, callback, one) {
  */
 bacon.html.one = function(event, callback) {
 	return bacon.html.on.call(this, event, callback, true);
+};
+
+// Object to store the events attached to the document for .live
+bacon._documentEvents = {};
+
+/**
+ * Adds an event handler to all elements which match the selector, now and in the
+ * future.
+ *
+ * @param string event The event name.
+ * @param function callback The function to be called.
+ */
+bacon.html.live = function(event, callback) {
+	if (!bacon._documentEvents[event]) {
+		bacon._documentEvents[event] = [];
+		$(document).on(event, function(e) {
+			for (var i = 0; i < bacon._documentEvents[event].length; i++) {
+				if ($(e.target).matches(bacon._documentEvents[event][i][0])) {
+					bacon._documentEvents[event][i][1].call(e.target, e);
+				}
+			}
+		});
+	}
+
+	bacon._documentEvents[event].push([this.selector, callback]);
+};
+
+/**
+ * Removes an event handler or group of event handlers set by .live.
+ *
+ * @param string event The event name (optional, if ommitted will remove all).
+ * @param function callback The event handler (optional, same as above).
+ */
+bacon.html.unlive = function(event, callback) {
+	if (typeof event === 'undefined' && typeof callback === 'undefined') {
+		var i, prop;
+		for (prop in bacon._documentEvents) {
+			for (i = 0; i < bacon._documentEvents[prop].length; i++) {
+				if (bacon._documentEvents[prop][i][0] === this.selector) {
+					bacon._documentEvents[prop].splice(i, 1);
+				}
+			}
+		}
+	} else if (bacon._documentEvents[event]) {
+		var events = bacon._documentEvents[event];
+		for (var i = 0; i < events.length; i++) {
+			if (events[i][0] === this.selector && (typeof callback === 'undefined' || events[i][1] === callback)) {
+				events.splice(i, 1);
+			}
+		}
+	}
 };
 
 /**
