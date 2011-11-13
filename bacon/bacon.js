@@ -821,9 +821,9 @@ if (typeof aJSON === 'undefined') {
 			if (typeof value === 'object' && !value) {
 				return 'null';
 			}
+			var i, partial = [];
 			if (value instanceof Array) {
-				var partial = [];
-				for (var i = 0; i < value.length; i++) {
+				for (i = 0; i < value.length; i++) {
 					partial.push(str(value[i]) || 'null');
 				}
 				if (partial.length === 0) {
@@ -832,8 +832,7 @@ if (typeof aJSON === 'undefined') {
 				return '[' + partial.join(',') + ']';
 			}
 			if (typeof value === 'object') {
-				var partial = [];
-				for (var i in value) {
+				for (i in value) {
 					partial.push(str(i) + ':' + str(value[i]));
 				}
 				if (partial.length === 0) {
