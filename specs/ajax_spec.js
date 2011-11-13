@@ -126,7 +126,7 @@ $.describe('AJAX tests', function() {
 	}, true);
 
 	$.it('should use $.post correctly with params', function(done) {
-		$.post('/ajaxtest', 'foo=bar', function(res) {
+		$.post('/ajaxtest/', 'foo=bar', function(res) {
 			$.expect(res).toEqual({
 				method: 'POST',
 				GET: [],
@@ -137,7 +137,7 @@ $.describe('AJAX tests', function() {
 	}, true);
 
 	$.it('should use $.post correctly with params and object data', function(done) {
-		$.post('/ajaxtest', {foo:'bar'}, function(res) {
+		$.post('/ajaxtest/', {foo:'bar'}, function(res) {
 			$.expect(res).toEqual({
 				method: 'POST',
 				GET: [],
@@ -148,7 +148,7 @@ $.describe('AJAX tests', function() {
 	}, true);
 
 	$.it('should use $.post correctly with params and no data', function(done) {
-		$.post('/ajaxtest', function(res) {
+		$.post('/ajaxtest/', function(res) {
 			$.expect(res).toEqual({
 				method: 'POST',
 				GET: [],
@@ -160,7 +160,7 @@ $.describe('AJAX tests', function() {
 
 	$.it('should use $.post correctly with an object', function(done) {
 		$.post({
-			url: '/ajaxtest',
+			url: '/ajaxtest/',
 			data: 'foo=bar',
 			callback: function(res) {
 				$.expect(res).toEqual({
@@ -175,7 +175,7 @@ $.describe('AJAX tests', function() {
 
 	$.it('should use $.post correctly with an object and no data', function(done) {
 		$.post({
-			url: '/ajaxtest',
+			url: '/ajaxtest/',
 			callback: function(res) {
 				$.expect(res).toEqual({
 					method: 'POST',
