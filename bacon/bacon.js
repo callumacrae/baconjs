@@ -752,3 +752,94 @@ bacon.enableArrayFeatures = function() {
 	
 	return true;
 };
+
+
+/*****************************************************************************
+ *                                 OLD BROWSERS
+ ****************************************************************************/
+
+if (typeof aJSON === 'undefined') {
+	aJSON = {};
+	
+	aJSON.parse = function(text) {
+		return eval('(' + text + ')');
+	};
+	
+	aJSON.stringify = function(value) {
+		 var cx = /[\u0000\u00ad\u0600-\u0604\u070f\u17b4\u17b5\u200c-\u200f\u2028-\u202f\u2060-\u206f\ufeff\ufff0-\uffff]/g,
+			escapable = /[\\\"\x00-\x1f\x7f-\x9f\u00ad\u0600-\u0604\u070f\u17b4\u17b5\u200c-\u200f\u2028-\u202f\u2060-\u206f\ufeff\ufff0-\uffff]/g,
+			meta = {
+				'\b': '\\b',
+				'\t': '\\t',
+				'\n': '\\n',
+				'\f': '\\f',
+				'\r': '\\r',
+				'"' : '\\"',
+				'\\': '\\\\'
+			};
+		
+		function str(value) {
+			if (value.toaJSON) {
+				return '"' + value.toaJSON() + '"';
+			}
+			if (typeof value === 'string') {
+				if (escapable.test(value.valueOf())) {
+					return '"' + value.valueOf().replace(escapable, function(a) {
+						var c = meta[a];
+						return typeof c === 'string' ? c : '\\u' +  ('0000' + a.charCodeAt(0).toString(16)).slice(-4);
+					}); + '"';
+				} else {
+					return '"' + value.valueOf() + '"';
+				}
+			}
+			if (typeof value === 'number') {
+				// JSON numbers must be finite
+				return isFinite(obj) ? String(value) : 'null';
+			}
+			if (typeof value === 'boolean') {
+				return value.valueOf();
+			}
+			if (typeof value === 'object' && !value) {
+				return 'null';
+			}
+			if (value instanceof Array) {
+				var partial = [];
+				for (var i = 0; i < value.length; i++) {
+					partial.push(str(value[i]) || 'null');
+				}
+				if (partial.length === 0) {
+					return '[]';
+				}
+				return '[' + partial.join(',') + ']';
+			}
+			if (typeof value === 'object') {
+				var partial = [];
+				for (var i in value) {
+					partial.push(str(i) + ':' + str(value[i]));
+				}
+				if (partial.length === 0) {
+					return '{}';
+				}
+				return '{' + partial.join(',') + '}';
+			}
+			throw new TypeError('No JSON representation for this object');
+		}
+		return str(value);
+	};
+
+	if (typeof Date.prototype.toaJSON !== 'function') {
+		Date.prototype.toaJSON = function(key) {
+			function f(n) {
+				return n < 10 ? '0' + n : n;
+			}
+    
+			return isFinite(this.valueOf()) ?
+				this.getUTCFullYear()			+ '-' +
+				f(this.getUTCMonth() + 1)	+ '-' +
+				f(this.getUTCDate())				+ 'T' +
+				f(this.getUTCHours())			+ ':' +
+				(this.getUTCMinutes())			+ ':' +
+				f(this.getUTCSeconds())		+ 'Z' : null;
+		};
+	}
+}
