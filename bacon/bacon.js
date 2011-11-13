@@ -560,19 +560,6 @@ bacon.html.serialise = function(object) {
 
 
 
-/*****************************************************************************
- *                                  OLD BROWSERS
- ****************************************************************************/
-
-if (!Array.prototype.forEach) {
-	Array.prototype.forEach = function(fn) {
-		for (var i = 0; i < this.length; i++) {
-			fn.call(null, this[i], i, this);
-		}
-	};
-}
-
-
 
 /*****************************************************************************
  *                                 ARRAY HELPERS
@@ -860,6 +847,15 @@ if (typeof JSON === 'undefined') {
 				f(this.getUTCSeconds())		+ 'Z' : null;
 		};
 	}
+}
+
+
+if (!Array.prototype.forEach) {
+	Array.prototype.forEach = function(fn) {
+		for (var i = 0; i < this.length; i++) {
+			fn.call(null, this[i], i, this);
+		}
+	};
 }
 
 /*****************************************************************************
