@@ -385,23 +385,28 @@ bacon.req = function(method, url, data, callback) {
 		data = bacon.querystring(data);
 	}
 
-	if (method === 'GET' && typeof data === 'string') {
-		url += '?' + data;
-		delete data;
-	}
-
 	if (window.XMLHttpRequest) {
 		req = new XMLHttpRequest();
 	} else {
 		req = new ActiveXObject('Microsoft.XMLHTTP');
 	}
 
+	if (method === 'GET' && typeof data === 'string') {
+		url += '?' + data;
+		delete data;
+	}
+
 	req.open(method, url, true);
+	
+	if (method === 'POST' && typeof data === 'string') {
+		req.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+	}
+	
 	req.onreadystatechange = function() {
 		if (req.readyState === 4 && req.status === 200) {
 			req.body = req.responseText;
 			if (req.getResponseHeader('Content-type') === 'application/json') {
-				callback(JSON.parse(req.responseText));
+				callback(JSON.parse(req.responseText), req);
 			} else {
 				callback(req.responseText, req)
 			}
@@ -412,7 +417,7 @@ bacon.req = function(method, url, data, callback) {
 			throw new Error('XHR Request failed: ' + req.status);
 		}
 	};
-	req.send((typeof data === 'string') ? data + '\n': null);
+	req.send((typeof data === 'string') ? data : null);
 };
 
 /**
@@ -556,6 +561,20 @@ bacon.html.serialise = function(object) {
 
 
 /*****************************************************************************
+ *                                  OLD BROWSERS
+ ****************************************************************************/
+
+if (!Array.prototype.forEach) {
+	Array.prototype.forEach = function(fn) {
+		for (var i = 0; i < this.length; i++) {
+			fn.call(null, this[i], i, this);
+		}
+	};
+}
+
+
+
+/*****************************************************************************
  *                                 ARRAY HELPERS
  ****************************************************************************/
 
@@ -573,7 +592,7 @@ bacon.enableArrayFeatures = function() {
 	Array.prototype.included = function(prop) {
 		return this.indexOf(prop) !== -1;
 	};
-	
+
 	/**
 	 * Finds the maximum value of an array. Supports strings and numbers, but not
 	 * both at the same time.
@@ -584,7 +603,7 @@ bacon.enableArrayFeatures = function() {
 		if (typeof type === 'undefined') {
 			type = typeof this[0];
 		}
-	
+
 		for (var i = 0, max = null; i < this.length; i++) {
 			if (typeof this[i] === type && (max === null || this[i] > max)) {
 				max = this[i];
@@ -592,7 +611,7 @@ bacon.enableArrayFeatures = function() {
 		}
 		return max;
 	};
-	
+
 	/**
 	 * Finds the minimum value of an array. Supports strings and numbers, but not
 	 * both at the same time.
@@ -603,7 +622,7 @@ bacon.enableArrayFeatures = function() {
 		if (typeof type === 'undefined') {
 			type = typeof this[0];
 		}
-	
+
 		for (var i = 0, min = null; i < this.length; i++) {
 			if (typeof this[i] === type && (min === null || this[i] < min)) {
 				min = this[i];
@@ -611,7 +630,7 @@ bacon.enableArrayFeatures = function() {
 		}
 		return min;
 	};
-	
+
 	/**
 	 * Returns the difference between the minimum and maximum vales of an array.
 	 * Supports only numbers.
@@ -628,7 +647,7 @@ bacon.enableArrayFeatures = function() {
 		}
 		return max - min;
 	};
-	
+
 	/**
 	 * Groups items from the array by the returned value of the callback.
 	 *
@@ -645,7 +664,7 @@ bacon.enableArrayFeatures = function() {
 		}
 		return obj;
 	};
-	
+
 	/**
 	 * Shufles the array.
 	 *
@@ -658,7 +677,7 @@ bacon.enableArrayFeatures = function() {
 		}
 		return end;
 	}
-	
+
 	/**
 	 * Returns a random item or selection of items from the array.
 	 *
@@ -679,7 +698,7 @@ bacon.enableArrayFeatures = function() {
 			return end;
 		}
 	};
-	
+
 	/**
 	 * Removes all falsey values from an Array.
 	 *
@@ -694,7 +713,7 @@ bacon.enableArrayFeatures = function() {
 		}
 		return end;
 	};
-	
+
 	/**
 	 * Flattens the array (removes all nesting).
 	 *
@@ -713,7 +732,7 @@ bacon.enableArrayFeatures = function() {
 		}
 		return end;
 	};
-	
+
 	/**
 	 * Removes all instances of value or an array of values.
 	 *
@@ -725,16 +744,16 @@ bacon.enableArrayFeatures = function() {
 		if (typeof array === 'undefined' || !array) {
 			value = [value];
 		}
-	
+
 		for (var clone = this.slice(), i = 0; i < value.length; i++) {
 			while (clone.indexOf(value[i]) !== -1) {
 				clone.splice(clone.indexOf(value[i]), 1);
 			}
 		}
-	
+
 		return clone;
 	};
-	
+
 	/**
 	 * Returns the array without all duplicate entries removed.
 	 *
@@ -749,7 +768,7 @@ bacon.enableArrayFeatures = function() {
 		}
 		return clone;
 	};
-	
+
 	return true;
 };
 
@@ -843,3 +862,81 @@ if (typeof aJSON === 'undefined') {
 		};
 	}
 }
+
+/*****************************************************************************
+ *                                    ANIMATIONS
+ ****************************************************************************/
+
+bacon._defaultAnimTime = 400;
+
+/**
+ * Fades in an element / group of elements.
+ *
+ * @param int time Time to fade it in over (optional).
+ * @param func cb Callback to call when fadeIn has completed (optional).
+ */
+bacon.html.fadeIn = function(time, cb) {
+	if (typeof time === 'function') {
+		cb = time;
+		time = bacon._defaultAnimTime;
+	} else if (typeof time === 'undefined') {
+		time = bacon._defaultAnimTime;
+	}
+
+	var startTime = Date.now(), orig = this;
+
+	this.each(function() {
+		var start = (this.style.opacity) ? this.style.opacity : '1', that = this;
+
+		if (start === '1') {
+			return;
+		}
+
+		var interval = setInterval(function() {
+			that.style.opacity = ((Date.now() - startTime) * (1 - start) / time);
+			if (that.style.opacity >= 1 && (that.style.opacity = 1)) {
+				clearInterval(interval);
+			}
+		}, 4);
+	});
+
+	setTimeout(function() {
+		cb.call(orig);
+	}, time + 4);
+};
+
+/**
+ * Fades out an element / group of elements.
+ *
+ * @param int time Time to fade it out over (optional).
+ * @param func cb Callback to call when fadeOut has completed (optional).
+ */
+bacon.html.fadeOut = function(time, cb) {
+	if (typeof time === 'function') {
+		cb = time;
+		time = bacon._defaultAnimTime;
+	} else if (typeof time === 'undefined') {
+		time = bacon._defaultAnimTime;
+	}
+
+	var startTime = Date.now(), orig = this;
+
+	this.each(function() {
+		var start = ((this.style.opacity) ? this.style.opacity : 1), that = this;
+
+		if (start === '0') {
+			return;
+		}
+
+		var interval = setInterval(function() {
+			that.style.opacity = 1 - ((Date.now() - startTime) * start / time);
+			if (that.style.opacity <= 0 && !(that.style.opacity = 0)) {
+				clearInterval(interval);
+			}
+		}, 4);
+	});
+
+	setTimeout(function() {
+		cb.call(orig);
+	}, time + 4);
+};
