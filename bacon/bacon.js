@@ -381,8 +381,11 @@ bacon.html.trigger = function(event, callback) {
 			if (typeof callback === 'function') {
 				callback.call(this, cancelled);
 			}
-		} else {
-			// IE
+		} else if (document.createEventObject) {
+			// Internet Explorer support
+			var clickEvent = document.createEventObject(window.event);
+			clickEvent.button = 1;
+			this.fireEvent('on' + event, clickEvent);
 		}
 	});
 	return this;
