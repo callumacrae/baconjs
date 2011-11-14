@@ -383,7 +383,7 @@ bacon.html.trigger = function(event, callback) {
 			}
 		} else if (document.createEventObject) {
 			// Internet Explorer support
-			var clickEvent = document.createEventObject(window.event);
+			var clickEvent = document.createEventObject();
 			clickEvent.button = 1;
 			this.fireEvent('on' + event, clickEvent);
 		}
