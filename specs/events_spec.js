@@ -1,10 +1,17 @@
 $.describe('bacon event tests', function() {
 	$.it('should handle .trigger correctly', function(done) {
-		// This test is not suitable for IE.
-		$('h1').elements[0].addEventListener('click', function() {
-			$.expect(this).toBe($('h1').elements[0]);
-			done();
-		});
+		var el = $('h1', 1).elements[0];
+		if (el.addEventListener) {
+			el.addEventListener('click', function() {
+				$.expect(this).toBe(el);
+				done();
+			});
+		} else {
+			el.attachEvent('onclick', function(e) {
+				$.expect(e.srcElement).toBe(el);
+				done();
+			});
+		}
 		$('h1').trigger('click');
 	}, true);
 

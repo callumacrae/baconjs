@@ -357,9 +357,10 @@ bacon.html.live = function(event, callback) {
 	if (!bacon._documentEvents[event]) {
 		bacon._documentEvents[event] = [];
 		$(document).on(event, function(e) {
-			for (var i = 0; i < bacon._documentEvents[event].length; i++) {
-				if ($(e.target).matches(bacon._documentEvents[event][i][0])) {
-					bacon._documentEvents[event][i][1].call(e.target, e);
+			for (var i = 0, t; i < bacon._documentEvents[event].length; i++) {
+				t = (e.target) ? e.target : e.srcElement;
+				if ($(t).matches(bacon._documentEvents[event][i][0])) {
+					bacon._documentEvents[event][i][1].call(t, e);
 				}
 			}
 		});
@@ -411,8 +412,11 @@ bacon.html.trigger = function(event, callback) {
 			if (typeof callback === 'function') {
 				callback.call(this, cancelled);
 			}
-		} else {
-			// IE
+		} else if (document.createEventObject) {
+			// Internet Explorer support
+			var clickEvent = document.createEventObject();
+			clickEvent.button = 1;
+			this.fireEvent('on' + event, clickEvent);
 		}
 	});
 	return this;

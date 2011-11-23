@@ -152,23 +152,23 @@ BaconTest.prototype._compare = function(input, value) {
 
 BaconTest.prototype.toEqual = function(value) {
 	var new_value = BaconTest.prototype._compare(this.input, value);
-	value = new_value ? true : 'Expected ' + value + ' to equal ' + this.input;
+	value = new_value ? true : 'Expected ' + this.input + ' to equal ' + value;
 	bacon._currentTest.push(value);
 };
 
 BaconTest.prototype.toNotEqual = function(value) {
 	var new_value = !BaconTest.prototype._compare(this.input, value);
-	value = new_value ? true : 'Expected ' + value + ' to not equal ' + this.input;
+	value = new_value ? true : 'Expected ' + this.input + ' to not equal ' + value;
 	bacon._currentTest.push(value);
 };
 
 BaconTest.prototype.toBe = function(value) {
-	value = (this.input === value) ? true : 'Expected ' + value + ' to be ' + this.input + '.';
+	value = (this.input === value) ? true : 'Expected ' + this.input + ' to be ' + value + '.';
 	bacon._currentTest.push(value);
 };
 
 BaconTest.prototype.toNotBe = function(value) {
-	value = (this.input === value) ? 'Expected ' + value + ' to not be ' + this.input + '.' : true;
+	value = (this.input === value) ? 'Expected ' + this.input + ' to not be ' + value + '.' : true;
 	bacon._currentTest.push(value);
 };
 
