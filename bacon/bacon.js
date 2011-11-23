@@ -60,6 +60,36 @@ bacon.html.each = function(callback) {
 };
 
 /**
+ * Modifies or retrieves the HTML of an element.
+ *
+ * @param string html The HTML to set.
+ */
+bacon.html.html = function(html) {
+	if (typeof html === 'undefined') {
+		return this.elements[0].innerHTML;
+	}
+	this.each(function() {
+		this.innerHTML = html;
+	});
+	return this;
+};
+
+/**
+ * Modifies or retrieves the value of an element.
+ *
+ * @param string html The value to set.
+ */
+bacon.html.val = bacon.html.value = function(text) {
+	if (typeof text === 'undefined') {
+		return this.elements[0].value;
+	}
+	this.each(function() {
+		this.value = text;
+	});
+	return this;
+};
+
+/**
  * Returns the next DOM element (optionally matching a specified selector).
  * If the current object holds more than one element, only the first will be used.
  *
@@ -455,11 +485,11 @@ bacon.req = function(method, url, data, callback) {
 	}
 
 	req.open(method, url, true);
-	
+
 	if (method === 'POST' && typeof data === 'string') {
 		req.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
 	}
-	
+
 	req.onreadystatechange = function() {
 		if (req.readyState === 4 && req.status === 200) {
 			req.body = req.responseText;
@@ -824,11 +854,11 @@ bacon.enableArrayFeatures = function() {
 
 if (typeof JSON === 'undefined') {
 	JSON = {};
-	
+
 	JSON.parse = function(text) {
 		return eval('(' + text + ')');
 	};
-	
+
 	JSON.stringify = function(value) {
 		 var cx = /[\u0000\u00ad\u0600-\u0604\u070f\u17b4\u17b5\u200c-\u200f\u2028-\u202f\u2060-\u206f\ufeff\ufff0-\uffff]/g,
 			escapable = /[\\\"\x00-\x1f\x7f-\x9f\u00ad\u0600-\u0604\u070f\u17b4\u17b5\u200c-\u200f\u2028-\u202f\u2060-\u206f\ufeff\ufff0-\uffff]/g,
@@ -841,7 +871,7 @@ if (typeof JSON === 'undefined') {
 				'"' : '\\"',
 				'\\': '\\\\'
 			};
-		
+
 		function str(value) {
 			if (value.toJSON) {
 				return '"' + value.toJSON() + '"';
@@ -895,7 +925,7 @@ if (typeof JSON === 'undefined') {
 			function f(n) {
 				return n < 10 ? '0' + n : n;
 			}
-    
+
 			return isFinite(this.valueOf()) ?
 				this.getUTCFullYear()			+ '-' +
 				f(this.getUTCMonth() + 1)	+ '-' +

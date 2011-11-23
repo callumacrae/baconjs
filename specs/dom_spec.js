@@ -131,4 +131,24 @@ $.describe('bacon DOM tests', function() {
 		$.expect($('span strong').length).toEqual(2);
 		$.expect($('span', 1).children().elements[0].tagName).toEqual('STRONG');
 	});
+
+	$.it('shouid retrieve html successfully', function() {
+		$('#test').elements[0].innerHTML = 'test';
+		$.expect($('#test').html()).toEqual('test');
+	});
+
+	$.it('should set html successfully', function() {
+		$('#test').html('hello');
+		$.expect($('#test').html()).toEqual('hello');
+	});
+
+	$.it('should retrieve values correctly', function() {
+		$.expect($('[name="foo"]').value()).toEqual('bar');
+	});
+
+	$.it('should retrieve values correctly', function() {
+		$('[name="foo"]').value('test');
+		$.expect($('[name="foo"]').value()).toEqual('test');
+		$('[name="foo"]').value('bar');
+	});
 });
