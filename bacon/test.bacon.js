@@ -58,7 +58,7 @@ bacon.runTests = function(output_div) {
 				lastDiv += '<div class="test ' + success + '"><p>' + result.it + '</p>' + errors + '</div>';
 			}
 			html += '<div class="testgroup"><h2>' + lastTestDesc + '</h2>' + lastDiv + '</div>';
-			output_div.elements[0].innerHTML = html;
+			$(output_div).html(html);
 			$('.testgroup h2').on('click', function() {
 				window.location = '?test=' + this.innerHTML.replace(/ /g, '%20');
 			});
