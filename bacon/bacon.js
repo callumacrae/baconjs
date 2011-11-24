@@ -108,8 +108,7 @@ bacon.html.text = function(text) {
 		});
 	}
 
-	text = bacon._getElementText(this.elements[0]);
-	return text;
+	return bacon._getElementText(this.elements[0]);
 };
 
 /**
@@ -118,13 +117,9 @@ bacon.html.text = function(text) {
  * @param string html The value to set.
  */
 bacon.html.val = bacon.html.value = function(text) {
-	if (typeof text === 'undefined') {
-		return this.elements[0].value;
-	}
-	this.each(function() {
+	return (typeof text === 'undefined') ? this.elements[0].value : this.each(function() {
 		this.value = text;
 	});
-	return this;
 };
 
 /**
@@ -248,12 +243,11 @@ bacon._toBaconObj = function(html) {
 bacon.html.append = function(html) {
 	html = bacon._toBaconObj(html);
 	var i;
-	this.each(function() {
+	return this.each(function() {
 		for (i = 0; i < html.elements.length; i++) {
 			this.appendChild(html.elements[i].cloneNode(true));
 		}
 	});
-	return this;
 };
 
 /**
@@ -261,6 +255,8 @@ bacon.html.append = function(html) {
  *
  * @param string selector The selector to use (can also be BaconObj).
  * @param int limit Limit the number of elements.
+ *
+ * @returns BaconObj Returns the element itself, not the element it was copied to.
  */
 bacon.html.appendTo = function(selector, limit) {
 	$(selector, limit).append(this);
@@ -275,12 +271,11 @@ bacon.html.appendTo = function(selector, limit) {
 bacon.html.prepend = function(html) {
 	html = bacon._toBaconObj(html);
 	var i;
-	this.each(function() {
+	return this.each(function() {
 		for (i = 0; i < html.elements.length; i++) {
 			this.insertBefore(html.elements[i].cloneNode(true), this.childNodes[0]);
 		}
 	});
-	return this;
 };
 
 /**
@@ -288,6 +283,8 @@ bacon.html.prepend = function(html) {
  *
  * @param string selector The selector to use (can also be BaconObj).
  * @param int limit Limit the number of elements.
+ *
+ * @returns BaconObj Returns the element itself, not the element it was copied to.
  */
 bacon.html.prependTo = function(selector, limit) {
 	$(selector, limit).prepend(this);
@@ -301,14 +298,12 @@ bacon.html.prependTo = function(selector, limit) {
  */
 bacon.html.insertBefore = function(element) {
 	element = bacon._toBaconObj(element);
-	var that;
-	this.each(function() {
-		that = this;
+	return this.each(function() {
+		var that = this;
 		element.each(function() {
 			that.parentNode.insertBefore(this.cloneNode(true), that);
 		});
 	});
-	return this;
 };
 
 /**
@@ -324,6 +319,7 @@ bacon.html.moveTo = function(selector, prepend) {
 	} else {
 		to.insertBefore(this.elements[0], to.childNodes[0])
 	}
+	return this;
 };
 
 /**
@@ -339,6 +335,7 @@ bacon.html.copyTo = function(selector, prepend) {
 	} else {
 		to.prepend(this);
 	}
+	return this;
 };
 
 /**
@@ -380,7 +377,7 @@ bacon._eventData = [];
  * @param bool one Only trigger once? It is recommended that you use .one.
  */
 bacon.html.on = function(event, callback, one) {
-	this.each(function() {
+	return this.each(function() {
 		var that = this, handler = function(e) {
 			if (callback.call(that, e) === false) {
 				e.stopPropagation();
@@ -406,7 +403,6 @@ bacon.html.on = function(event, callback, one) {
 			bacon._eventData[$(this).data('baconId')].push([event, handler]);
 		}
 	});
-	return this;
 };
 
 /**
@@ -444,6 +440,7 @@ bacon.html.live = function(event, callback) {
 	}
 
 	bacon._documentEvents[event].push([this.selector, callback]);
+	return this;
 };
 
 /**
@@ -470,6 +467,7 @@ bacon.html.unlive = function(event, callback) {
 			}
 		}
 	}
+	return this;
 };
 
 /**
@@ -477,9 +475,11 @@ bacon.html.unlive = function(event, callback) {
  *
  * @param string event The event name to be triggered.
  * @param function callback The function to be called on completion.
+ *
+ * @todo Add callback support to IE stuff.
  */
 bacon.html.trigger = function(event, callback) {
-	this.each(function() {
+	return this.each(function() {
 		if (this.dispatchEvent) {
 			// Create and dispatch the event
 			var evt = document.createEvent('UIEvents');
@@ -496,7 +496,6 @@ bacon.html.trigger = function(event, callback) {
 			this.fireEvent('on' + event, clickEvent);
 		}
 	});
-	return this;
 };
 
 /**
@@ -506,7 +505,7 @@ bacon.html.trigger = function(event, callback) {
  * @param function callback The function specified in .on. Optional.
  */
 bacon.html.removeHandlers = bacon.html.off = function(event, callback) {
-	this.each(function() {
+	return this.each(function() {
 		if ($(this).data('baconId')) {
 			var data = bacon._eventData[$(this).data('baconId')];
 			for (var i = 0; i < data.length; i++) {
@@ -521,7 +520,6 @@ bacon.html.removeHandlers = bacon.html.off = function(event, callback) {
 			}
 		}
 	});
-	return this;
 };
 
 
@@ -554,11 +552,7 @@ bacon.req = function(method, url, data, callback) {
 		data = bacon.querystring(data);
 	}
 
-	if (window.XMLHttpRequest) {
-		req = new XMLHttpRequest();
-	} else {
-		req = new ActiveXObject('Microsoft.XMLHTTP');
-	}
+	var req = (window.XMLHttpRequest) ? new XMLHttpRequest() : new ActiveXObject('Microsoft.XMLHTTP');
 
 	if (method === 'GET' && typeof data === 'string') {
 		url += '?' + data;
@@ -587,6 +581,8 @@ bacon.req = function(method, url, data, callback) {
 		}
 	};
 	req.send((typeof data === 'string') ? data : null);
+
+	return this;
 };
 
 /**
@@ -607,8 +603,6 @@ bacon.get = function(url, data, callback) {
 
 /**
  * POSTs data to the specified URL.
- *
- * @todo: Why isn't this working?
  *
  * @param string url The URL to send to.
  * @param string data The object to send (can also be a string).
@@ -641,13 +635,12 @@ bacon.html.data = function(get, set) {
 		return (this.elements[0].dataset) ? this.elements[0].dataset[get] : null;
 	}
 
-	this.each(function() {
+	return this.each(function() {
 		if (!this.dataset) {
 			this.dataset = {};
 		}
 		this.dataset[get] = set;
 	});
-	return this;
 };
 
 
@@ -1067,6 +1060,8 @@ bacon.html.fadeIn = function(time, cb) {
 	setTimeout(function() {
 		cb.call(orig);
 	}, time + 4);
+
+	return this;
 };
 
 /**
@@ -1103,4 +1098,6 @@ bacon.html.fadeOut = function(time, cb) {
 	setTimeout(function() {
 		cb.call(orig);
 	}, time + 4);
+
+	return this;
 };

@@ -169,7 +169,6 @@ $.describe('bacon DOM tests', function() {
 
 	$.it('should set text successfully', function() {
 		$('#test').text('he<b>llo</b>');
-		console.log($('#test').text());
 		$.expect($('#test').text()).toEqual('he&lt;b&gt;llo&lt;/b&gt;');
 		$('#test').text('hello');
 	});
