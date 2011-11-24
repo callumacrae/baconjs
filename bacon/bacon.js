@@ -257,6 +257,23 @@ bacon.html.prependTo = function(selector, limit) {
 };
 
 /**
+ * Inserts the specified element before the current element.
+ *
+ * @param object element The selector / BaconObj etc to insert.
+ */
+bacon.html.insertBefore = function(element) {
+	element = bacon._toBaconObj(element);
+	var that;
+	this.each(function() {
+		that = this;
+		element.each(function() {
+			that.parentNode.insertBefore(this.cloneNode(true), that);
+		});
+	});
+	return this;
+};
+
+/**
  * Moves the element to the element specified by the selector.
  *
  * @param string selector The element to move it to.

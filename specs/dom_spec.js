@@ -101,6 +101,12 @@ $.describe('bacon DOM tests', function() {
 		$.expect($('form .testp').length).toEqual(3);
 	});
 
+	$.it('should insertBefore correctly', function() {
+		$('.testp').insertBefore('<span class="lololol">t</span>');
+		$.expect($('.testp .lololol').length).toEqual(0);
+		$.expect($('.lololol').length).toEqual(4);
+	});
+
 	$.it('should prepend from HTMLElement properly', function() {
 		var div = document.createElement('strong');
 		div.innerHTML = 'test';
