@@ -27,6 +27,56 @@ BaconObj.prototype = bacon.html = {};
  ****************************************************************************/
 
 /**
+ * A simple HTML text escape.
+ *
+ * @param string text The text to escape.
+ */
+bacon._escape = function(text) {
+	return text.replace(/&/g, '&amp;')
+		.replace(/\</g, '&lt;')
+		.replace(/\>/g, '&gt;')
+		.replace(/'/g, '&#39;')
+		.replace(/"/g, '&quot;');
+};
+
+/**
+ * Returns an elements text with all tags stripped. (<a>h<b>i</b></a> -> "hi").
+ *
+ * @param obj element The HTML element.
+ */
+bacon._getElementText = function(element) {
+	var childNodes = element.childNodes, end = '', i;
+	for (i = 0; i < childNodes.length; i++) {
+		if (childNodes[i] instanceof Text) {
+			end += childNodes[i].nodeValue;
+		} else {
+			end += bacon._getElementText(childNodes[i]);
+		}
+	}
+	return end;
+};
+
+/**
+ * Takes either an HTMLElement, BaconObj or HTML string and returns a
+ * BaconObj.
+ *
+ * @param object html HTMLElement / BaconObj / HTML string.
+ * @returns BaconObj.
+ */
+bacon._toBaconObj = function(html) {
+	if (html instanceof BaconObj) {
+		return html;
+	} else if (html instanceof  HTMLElement) {
+		return $(html.cloneNode(true));
+	} else if (typeof html === 'string') {
+		var div = document.createElement('div');
+		div.innerHTML = html;
+		return $(div).children();
+	}
+	return false;
+};
+
+/**
  * Select an element using a CSS selector.
  *
  * @param string selector The selector to use.
@@ -72,26 +122,6 @@ bacon.html.html = function(html) {
 		this.innerHTML = html;
 	});
 	return this;
-};
-
-bacon._escape = function(text) {
-	return text.replace(/&/g, '&amp;')
-		.replace(/\</g, '&lt;')
-		.replace(/\>/g, '&gt;')
-		.replace(/'/g, '&#39;')
-		.replace(/"/g, '&quot;');
-};
-
-bacon._getElementText = function(element) {
-	var childNodes = element.childNodes, end = '', i;
-	for (i = 0; i < childNodes.length; i++) {
-		if (childNodes[i] instanceof Text) {
-			end += childNodes[i].nodeValue;
-		} else {
-			end += bacon._getElementText(childNodes[i]);
-		}
-	}
-	return end;
 };
 
 /**
@@ -213,26 +243,6 @@ bacon.html.siblings = function(selector) {
  */
 bacon.html.get = function(number) {
 	return $(this.elements[number]);
-};
-
-/**
- * Takes either an HTMLElement, BaconObj or HTML string and returns a
- * BaconObj.
- *
- * @param object html HTMLElement / BaconObj / HTML string.
- * @returns BaconObj.
- */
-bacon._toBaconObj = function(html) {
-	if (html instanceof BaconObj) {
-		return html;
-	} else if (html instanceof  HTMLElement) {
-		return $(html.cloneNode(true));
-	} else if (typeof html === 'string') {
-		var div = document.createElement('div');
-		div.innerHTML = html;
-		return $(div).children();
-	}
-	return false;
 };
 
 /**
@@ -364,6 +374,8 @@ bacon.html.matches = function(selector) {
  *                               EVENT HANDLING
  ****************************************************************************/
 
+// Object to store the events attached to the document for .live
+bacon._documentEvents = {};
 bacon._eventData = [];
 
 /**
@@ -413,9 +425,6 @@ bacon.html.on = function(event, callback, one) {
 bacon.html.one = function(event, callback) {
 	return bacon.html.on.call(this, event, callback, true);
 };
-
-// Object to store the events attached to the document for .live
-bacon._documentEvents = {};
 
 /**
  * Adds an event handler to all elements which match the selector, now and in the
@@ -469,6 +478,30 @@ bacon.html.unlive = function(event, callback) {
 };
 
 /**
+ * Removes the specified handler / all handlers of that type for that element.
+ *
+ * @param string event The event name.
+ * @param function callback The function specified in .on. Optional.
+ */
+bacon.html.removeHandlers = bacon.html.off = function(event, callback) {
+	return this.each(function() {
+		if ($(this).data('baconId')) {
+			var data = bacon._eventData[$(this).data('baconId')];
+			for (var i = 0; i < data.length; i++) {
+				if (data[i][0] === event && (typeof callback === 'undefined' || data[i][1].callback === callback)) {
+					if (this.removeEventListener) {
+						this.removeEventListener(data[i][0], data[i][1]);
+					} else {
+						// Internet Explorer support
+						this.detachEvent('on' + data[i][0], data[i][1]);
+					}
+				}
+			}
+		}
+	});
+};
+
+/**
  * Triggers an event handler for the specified event.
  *
  * @param string event The event name to be triggered.
@@ -492,30 +525,6 @@ bacon.html.trigger = function(event, callback) {
 			var clickEvent = document.createEventObject();
 			clickEvent.button = 1;
 			this.fireEvent('on' + event, clickEvent);
-		}
-	});
-};
-
-/**
- * Removes the specified handler / all handlers of that type for that element.
- *
- * @param string event The event name.
- * @param function callback The function specified in .on. Optional.
- */
-bacon.html.removeHandlers = bacon.html.off = function(event, callback) {
-	return this.each(function() {
-		if ($(this).data('baconId')) {
-			var data = bacon._eventData[$(this).data('baconId')];
-			for (var i = 0; i < data.length; i++) {
-				if (data[i][0] === event && (typeof callback === 'undefined' || data[i][1].callback === callback)) {
-					if (this.removeEventListener) {
-						this.removeEventListener(data[i][0], data[i][1]);
-					} else {
-						// Internet Explorer support
-						this.detachEvent('on' + data[i][0], data[i][1]);
-					}
-				}
-			}
 		}
 	});
 };
@@ -641,6 +650,30 @@ bacon.html.data = function(get, set) {
 	});
 };
 
+/**
+ * Form helper: serialises form into a querystring or object.
+ *
+ * @param bool object If true, will return an object.
+ */
+bacon.html.serialise = function(object) {
+	if (this.elements[0].tagName !== 'FORM') {
+		throw new Error('You can only serialise forms.');
+	}
+	if (typeof object !== 'boolean') {
+		object = false;
+	}
+
+	var form = this.elements[0].elements, i, string = [], obj = {};
+	for (i = 0; i < form.length; i++) {
+		if (object) {
+			obj[form[i].name] = form[i].value;
+		} else {
+			string.push(form[i].name + '=' + form[i].value);
+		}
+	}
+	return (object) ? obj : string.join('&');
+};
+
 
 /**
  * Querystring helper: Converts querystrings to objects and back.
@@ -693,30 +726,6 @@ bacon.querystring = bacon.qs = function(query) {
 	}
 };
 
-/**
- * Form helper: serialises form into a querystring or object.
- *
- * @param bool object If true, will return an object.
- */
-bacon.html.serialise = function(object) {
-	if (this.elements[0].tagName !== 'FORM') {
-		throw new Error('You can only serialise forms.');
-	}
-	if (typeof object !== 'boolean') {
-		object = false;
-	}
-
-	var form = this.elements[0].elements, i, string = [], obj = {};
-	for (i = 0; i < form.length; i++) {
-		if (object) {
-			obj[form[i].name] = form[i].value;
-		} else {
-			string.push(form[i].name + '=' + form[i].value);
-		}
-	}
-	return (object) ? obj : string.join('&');
-};
-
 
 
 
@@ -728,6 +737,56 @@ bacon.html.serialise = function(object) {
  * Enables the bacon array features.
  */
 bacon.enableArrayFeatures = function() {
+
+	/**
+	 * Removes all falsey values from an Array.
+	 *
+	 * @return array Array with all falsey values removed.
+	 */
+	Array.prototype.compact = function() {
+		for (var end = [], i = 0; i < this.length; i++) {
+			if (this[i]) {
+				end.push(this[i]);
+			}
+		}
+		return end;
+	};
+
+	/**
+	 * Flattens the array (removes all nesting).
+	 *
+	 * @returns array Flattened array.
+	 */
+	Array.prototype.flatten = function() {
+		for (var end = [], flat, i = 0, j; i < this.length; i++) {
+			if (this[i] instanceof Array) {
+				flat = this[i].flatten();
+				for (j = 0; j < flat.length; j++) {
+					end.push(flat[j]);
+				}
+			} else {
+				end.push(this[i]);
+			}
+		}
+		return end;
+	};
+
+	/**
+	 * Groups items from the array by the returned value of the callback.
+	 *
+	 * @param function sortBy The function to query.
+	 * @returns object Object of the grouped array items.
+	 */
+	Array.prototype.groupBy = function(sortBy) {
+		for (var a, obj = {}, i = 0; i < this.length; i++) {
+			a = sortBy(this[i]);
+			if (!obj[a]) {
+				obj[a] = [];
+			}
+			obj[a].push(this[i]);
+		}
+		return obj;
+	};
 
 	/**
 	 * Tests whether the specified value is included in the array.
@@ -778,53 +837,6 @@ bacon.enableArrayFeatures = function() {
 	};
 
 	/**
-	 * Returns the difference between the minimum and maximum vales of an array.
-	 * Supports only numbers.
-	 */
-	Array.prototype.range = function() {
-		for (var i = 0, min = null, max = null; i < this.length; i++) {
-			if (typeof this[i] === 'number') {
-				if (min === null || this[i] < min) {
-					min = this[i];
-				} else if (max === null || this[i] > max) {
-					max = this[i];
-				}
-			}
-		}
-		return max - min;
-	};
-
-	/**
-	 * Groups items from the array by the returned value of the callback.
-	 *
-	 * @param function sortBy The function to query.
-	 * @returns object Object of the grouped array items.
-	 */
-	Array.prototype.groupBy = function(sortBy) {
-		for (var a, obj = {}, i = 0; i < this.length; i++) {
-			a = sortBy(this[i]);
-			if (!obj[a]) {
-				obj[a] = [];
-			}
-			obj[a].push(this[i]);
-		}
-		return obj;
-	};
-
-	/**
-	 * Shufles the array.
-	 *
-	 * @returns array The shuffled array.
-	 */
-	Array.prototype.shuffle = function() {
-		var end = [], clone = this.slice();
-		while (clone.length > 0) {
-			end = end.concat(clone.splice(Math.floor(Math.random() * clone.length), 1));
-		}
-		return end;
-	}
-
-	/**
 	 * Returns a random item or selection of items from the array.
 	 *
 	 * @param number limit The number of elements to return.
@@ -846,36 +858,48 @@ bacon.enableArrayFeatures = function() {
 	};
 
 	/**
-	 * Removes all falsey values from an Array.
-	 *
-	 * @return array Array with all falsey values removed.
+	 * Returns the difference between the minimum and maximum vales of an array.
+	 * Supports only numbers.
 	 */
-	Array.prototype.compact = function() {
-		for (var end = [], i = 0; i < this.length; i++) {
-			if (this[i]) {
-				end.push(this[i]);
+	Array.prototype.range = function() {
+		for (var i = 0, min = null, max = null; i < this.length; i++) {
+			if (typeof this[i] === 'number') {
+				if (min === null || this[i] < min) {
+					min = this[i];
+				} else if (max === null || this[i] > max) {
+					max = this[i];
+				}
 			}
+		}
+		return max - min;
+	};
+
+	/**
+	 * Shufles the array.
+	 *
+	 * @returns array The shuffled array.
+	 */
+	Array.prototype.shuffle = function() {
+		var end = [], clone = this.slice();
+		while (clone.length > 0) {
+			end = end.concat(clone.splice(Math.floor(Math.random() * clone.length), 1));
 		}
 		return end;
 	};
 
 	/**
-	 * Flattens the array (removes all nesting).
+	 * Returns the array without all duplicate entries removed.
 	 *
-	 * @returns array Flattened array.
+	 * @returns array The array without the duplicates.
 	 */
-	Array.prototype.flatten = function() {
-		for (var end = [], flat, i = 0, j; i < this.length; i++) {
-			if (this[i] instanceof Array) {
-				flat = this[i].flatten();
-				for (j = 0; j < flat.length; j++) {
-					end.push(flat[j]);
-				}
-			} else {
-				end.push(this[i]);
+	Array.prototype.unique = function() {
+		for (var i = 0, clone = this.slice(); i < clone.length; i++) {
+			if (clone.indexOf(clone[i]) < i) {
+				clone.splice(i, 1);
+				i--;
 			}
 		}
-		return end;
+		return clone;
 	};
 
 	/**
@@ -896,21 +920,6 @@ bacon.enableArrayFeatures = function() {
 			}
 		}
 
-		return clone;
-	};
-
-	/**
-	 * Returns the array without all duplicate entries removed.
-	 *
-	 * @returns array The array without the duplicates.
-	 */
-	Array.prototype.unique = function() {
-		for (var i = 0, clone = this.slice(); i < clone.length; i++) {
-			if (clone.indexOf(clone[i]) < i) {
-				clone.splice(i, 1);
-				i--;
-			}
-		}
 		return clone;
 	};
 
