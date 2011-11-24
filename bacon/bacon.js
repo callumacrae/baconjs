@@ -74,6 +74,44 @@ bacon.html.html = function(html) {
 	return this;
 };
 
+bacon._escape = function(text) {
+	return text.replace(/&/g, '&amp;')
+		.replace(/\</g, '&lt;')
+		.replace(/\>/g, '&gt;')
+		.replace(/'/g, '&#39;')
+		.replace(/"/g, '&quot;');
+};
+
+bacon._getElementText = function(element) {
+	var childNodes = element.childNodes, end = '', i;
+	for (i = 0; i < childNodes.length; i++) {
+		if (childNodes[i] instanceof Text) {
+			end += childNodes[i].nodeValue;
+		} else {
+			end += bacon._getElementText(childNodes[i]);
+		}
+	}
+	return end;
+};
+
+/**
+ * Modifies or retrieves the text contained in an element.
+ *
+ * @param string text The text to set. If not specified, will return text.
+ */
+bacon.html.text = function(text) {
+	if (typeof text !== 'undefined') {
+		//.each returns this
+		text = bacon._escape(bacon._escape(text));
+		return this.each(function() {
+			this.innerHTML = text;
+		});
+	}
+
+	text = bacon._getElementText(this.elements[0]);
+	return text;
+};
+
 /**
  * Modifies or retrieves the value of an element.
  *

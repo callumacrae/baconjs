@@ -162,6 +162,18 @@ $.describe('bacon DOM tests', function() {
 		$.expect($('[name="foo"]').value()).toEqual('bar');
 	});
 
+	$.it('should retrieve text successfully', function() {
+		var text = bacon._toBaconObj('<div><s>w</s>or<p>ti<i>s<u></u>t</i></p></div>').text();
+		$.expect(text).toEqual('wortist');
+	});
+
+	$.it('should set text successfully', function() {
+		$('#test').text('he<b>llo</b>');
+		console.log($('#test').text());
+		$.expect($('#test').text()).toEqual('he&lt;b&gt;llo&lt;/b&gt;');
+		$('#test').text('hello');
+	});
+
 	$.it('should retrieve values correctly', function() {
 		$('[name="foo"]').value('test');
 		$.expect($('[name="foo"]').value()).toEqual('test');
