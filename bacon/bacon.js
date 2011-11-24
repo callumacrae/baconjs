@@ -226,6 +226,7 @@ bacon.html.append = function(html) {
  */
 bacon.html.appendTo = function(selector, limit) {
 	$(selector, limit).append(this);
+	return this;
 };
 
 /**
@@ -252,6 +253,7 @@ bacon.html.prepend = function(html) {
  */
 bacon.html.prependTo = function(selector, limit) {
 	$(selector, limit).prepend(this);
+	return this;
 };
 
 /**
