@@ -91,6 +91,16 @@ $.describe('bacon DOM tests', function() {
 		$.expect($('.thediv i').length).toEqual(1);
 	});
 
+	$.it('should appendTo correctly', function() {
+		$('.testp').appendTo('form');
+		$.expect($('form .testp').length).toEqual(1);
+	});
+
+	$.it('should prependTo correctly', function() {
+		$('.testp').prependTo('form');
+		$.expect($('form .testp').length).toEqual(3);
+	});
+
 	$.it('should prepend from HTMLElement properly', function() {
 		var div = document.createElement('strong');
 		div.innerHTML = 'test';

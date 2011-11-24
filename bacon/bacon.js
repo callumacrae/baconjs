@@ -219,6 +219,16 @@ bacon.html.append = function(html) {
 };
 
 /**
+ * Appends the current element to the specified element(s).
+ *
+ * @param string selector The selector to use (can also be BaconObj).
+ * @param int limit Limit the number of elements.
+ */
+bacon.html.appendTo = function(selector, limit) {
+	$(selector, limit).append(this);
+};
+
+/**
  * Prepends the provided node / BaconObj / HTML string to the current element(s).
  *
  * @param object html The HTMLElement / BaconObj / HTML string to prepend.
@@ -232,6 +242,16 @@ bacon.html.prepend = function(html) {
 		}
 	});
 	return this;
+};
+
+/**
+ * Prepends the current element to the specified element(s).
+ *
+ * @param string selector The selector to use (can also be BaconObj).
+ * @param int limit Limit the number of elements.
+ */
+bacon.html.prependTo = function(selector, limit) {
+	$(selector, limit).prepend(this);
 };
 
 /**
