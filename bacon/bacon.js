@@ -160,8 +160,8 @@ bacon.html.previous = function(selector) {
  * @returns BaconObj The children.
  */
 bacon.html.children = function(selector) {
-	var children = this.elements[0].childNodes, final_children = [];
-	for (var i = 0; i < children.length; i++) {
+	var children = this.elements[0].childNodes, final_children = [], i;
+	for (i = 0; i < children.length; i++) {
 		if (children[i].nodeType === 1 && (typeof selector === 'undefined' || $(children[i]).matches(selector))) {
 			final_children.push(children[i]);
 		}
@@ -242,9 +242,8 @@ bacon._toBaconObj = function(html) {
  */
 bacon.html.append = function(html) {
 	html = bacon._toBaconObj(html);
-	var i;
 	return this.each(function() {
-		for (i = 0; i < html.elements.length; i++) {
+		for (var i = 0; i < html.elements.length; i++) {
 			this.appendChild(html.elements[i].cloneNode(true));
 		}
 	});
@@ -270,9 +269,8 @@ bacon.html.appendTo = function(selector, limit) {
  */
 bacon.html.prepend = function(html) {
 	html = bacon._toBaconObj(html);
-	var i;
 	return this.each(function() {
-		for (i = 0; i < html.elements.length; i++) {
+		for (var i = 0; i < html.elements.length; i++) {
 			this.insertBefore(html.elements[i].cloneNode(true), this.childNodes[0]);
 		}
 	});
@@ -460,8 +458,8 @@ bacon.html.unlive = function(event, callback) {
 			}
 		}
 	} else if (bacon._documentEvents[event]) {
-		var events = bacon._documentEvents[event];
-		for (var i = 0; i < events.length; i++) {
+		var events = bacon._documentEvents[event], i;
+		for (i = 0; i < events.length; i++) {
 			if (events[i][0] === this.selector && (typeof callback === 'undefined' || events[i][1] === callback)) {
 				events.splice(i, 1);
 			}
@@ -482,9 +480,9 @@ bacon.html.trigger = function(event, callback) {
 	return this.each(function() {
 		if (this.dispatchEvent) {
 			// Create and dispatch the event
-			var evt = document.createEvent('UIEvents');
+			var cancelled, evt = document.createEvent('UIEvents');
 			evt.initUIEvent(event, true, true, window, 1);
-			var cancelled = !this.dispatchEvent(evt);
+			cancelled = !this.dispatchEvent(evt);
 
 			if (typeof callback === 'function') {
 				callback.call(this, cancelled);
@@ -676,8 +674,7 @@ bacon.querystring = bacon.qs = function(query) {
 	} else if (typeof query === 'string') {
 		// Convert from string to object
 		query = query.split('&');
-		for (var obj = {}, i = 0; i < query.length; i++) {
-			var match;
+		for (var match, obj = {}, i = 0; i < query.length; i++) {
 			if (match = /^([^\[\]]+)\[([^\[\]]+)\]=(.+)$/.exec(query[i])) {
 				if (typeof obj[match[1]] === 'undefined') {
 					obj[match[1]] = {};
@@ -854,8 +851,7 @@ bacon.enableArrayFeatures = function() {
 	 * @return array Array with all falsey values removed.
 	 */
 	Array.prototype.compact = function() {
-		var end = [], i;
-		for (i = 0; i < this.length; i++) {
+		for (var end = [], i = 0; i < this.length; i++) {
 			if (this[i]) {
 				end.push(this[i]);
 			}
@@ -869,9 +865,9 @@ bacon.enableArrayFeatures = function() {
 	 * @returns array Flattened array.
 	 */
 	Array.prototype.flatten = function() {
-		for (var end = [], i = 0, j; i < this.length; i++) {
+		for (var end = [], flat, i = 0, j; i < this.length; i++) {
 			if (this[i] instanceof Array) {
-				var flat = this[i].flatten();
+				flat = this[i].flatten();
 				for (j = 0; j < flat.length; j++) {
 					end.push(flat[j]);
 				}
@@ -1043,13 +1039,13 @@ bacon.html.fadeIn = function(time, cb) {
 	var startTime = Date.now(), orig = this;
 
 	this.each(function() {
-		var start = (this.style.opacity) ? this.style.opacity : '1', that = this;
+		var interval, start = (this.style.opacity) ? this.style.opacity : '1', that = this;
 
 		if (start === '1') {
 			return;
 		}
 
-		var interval = setInterval(function() {
+		interval = setInterval(function() {
 			that.style.opacity = ((Date.now() - startTime) * (1 - start) / time);
 			if (that.style.opacity >= 1 && (that.style.opacity = 1)) {
 				clearInterval(interval);
@@ -1081,13 +1077,13 @@ bacon.html.fadeOut = function(time, cb) {
 	var startTime = Date.now(), orig = this;
 
 	this.each(function() {
-		var start = ((this.style.opacity) ? this.style.opacity : 1), that = this;
+		var interval, start = ((this.style.opacity) ? this.style.opacity : 1), that = this;
 
 		if (start === '0') {
 			return;
 		}
 
-		var interval = setInterval(function() {
+		interval = setInterval(function() {
 			that.style.opacity = 1 - ((Date.now() - startTime) * start / time);
 			if (that.style.opacity <= 0 && !(that.style.opacity = 0)) {
 				clearInterval(interval);
