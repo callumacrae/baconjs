@@ -39,6 +39,7 @@ $.describe('bacon DOM tests', function() {
 	$.it('should use .matches correctly', function() {
 		$.expect($('#test').matches('p')).toEqual(true);
 		$.expect($('.thediv').matches('div')).toEqual(true);
+		$.expect($('.thediv').matches('p')).toEqual(false);
 	});
 
 	$.it('should use .next correctly', function() {

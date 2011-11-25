@@ -33,10 +33,8 @@ BaconObj.prototype = bacon.html = {};
  */
 bacon._escape = function(text) {
 	return text.replace(/&/g, '&amp;')
-		.replace(/\</g, '&lt;')
-		.replace(/\>/g, '&gt;')
-		.replace(/'/g, '&#39;')
-		.replace(/"/g, '&quot;');
+		.replace(/\</g, '&lt;').replace(/\>/g, '&gt;')
+		.replace(/'/g, '&#39;').replace(/"/g, '&quot;');
 };
 
 /**
@@ -47,11 +45,7 @@ bacon._escape = function(text) {
 bacon._getElementText = function(element) {
 	var childNodes = element.childNodes, end = '', i;
 	for (i = 0; i < childNodes.length; i++) {
-		if (childNodes[i] instanceof Text) {
-			end += childNodes[i].nodeValue;
-		} else {
-			end += bacon._getElementText(childNodes[i]);
-		}
+		end += (childNodes[i] instanceof Text) ? childNodes[i].nodeValue : bacon._getElementText(childNodes[i]);
 	}
 	return end;
 };
@@ -63,16 +57,10 @@ bacon._getElementText = function(element) {
  * @returns BaconObj.
  */
 bacon._toBaconObj = function(html) {
-	if (html instanceof BaconObj) {
-		return html;
-	} else if (html instanceof  HTMLElement) {
-		return $(html.cloneNode(true));
-	} else if (typeof html === 'string') {
-		var div = document.createElement('div');
-		div.innerHTML = html;
-		return $(div).children();
+	if (typeof html === 'object') {
+		return (html instanceof BaconObj) ? html : $(html.cloneNode(true));
 	}
-	return false;
+	return (typeof html === 'string') ? $(document.createElement('div')).html(html).children() : false;
 };
 
 /**
@@ -90,7 +78,7 @@ bacon.html.select = function(selector, limit) {
 		}
 	}
 	this.elements = elements;
-	this.length = this.elements.length;
+	this.length = elements.length;
 	this.selector = selector;
 	return this;
 };
@@ -333,11 +321,7 @@ bacon.html.moveTo = function(selector, prepend) {
  */
 bacon.html.copyTo = function(selector, prepend) {
 	var to = (typeof selector === 'string') ? $(selector, 1) : selector;
-	if (typeof prepend === 'undefined' || !prepend) {
-		to.append(this);
-	} else {
-		to.prepend(this);
-	}
+	to[(typeof prepend === 'undefined' || !prepend) ? 'append' : 'prepend'](this);
 	return this;
 };
 
@@ -355,12 +339,7 @@ bacon.html.matches = function(selector) {
 		return this.elements[0].mozMatchesSelector(selector);
 	}
 	var possibles = this.elements[0].parentNode.querySelectorAll(selector);
-	for (var i = 0; i < possibles.length; i++) {
-		if (possibles[i] === this.elements[0]) {
-			return true;
-		}
-	}
-	return false;
+	return possibles.indexOf(this.elements[0]) !== -1;
 };
 
 
@@ -462,8 +441,7 @@ bacon.html.unlive = function(event, callback) {
 			}
 		}
 	} else if (bacon._documentEvents[event]) {
-		var events = bacon._documentEvents[event], i;
-		for (i = 0; i < events.length; i++) {
+		for (var events = bacon._documentEvents[event], i = 0; i < events.length; i++) {
 			if (events[i][0] === this.selector && (typeof callback === 'undefined' || events[i][1] === callback)) {
 				events.splice(i, 1);
 			}
@@ -481,8 +459,8 @@ bacon.html.unlive = function(event, callback) {
 bacon.html.removeHandlers = bacon.html.off = function(event, callback) {
 	return this.each(function() {
 		if ($(this).data('baconId')) {
-			var data = bacon._eventData[$(this).data('baconId')];
-			for (var i = 0; i < data.length; i++) {
+			var data = bacon._eventData[$(this).data('baconId')], i;
+			for (i = 0; i < data.length; i++) {
 				if (data[i][0] === event && (typeof callback === 'undefined' || data[i][1].callback === callback)) {
 					if (this.removeEventListener) {
 						this.removeEventListener(data[i][0], data[i][1]);
@@ -595,12 +573,8 @@ bacon.req = function(method, url, data, callback) {
  * @param func callback The function to send that data to.
  */
 bacon.get = function(url, data, callback) {
-	if (typeof url === 'object') {
-		url.method = 'GET';
-		return bacon.req(url);
-	} else {
-		return bacon.req('GET', url, data, callback);
-	}
+	url.method = 'GET'; // Doesn't matter if it is a string, it'll be ignored
+	return (typeof url === 'object') ? bacon.req(url) : bacon.req('GET', url, data, callback);
 };
 
 /**
@@ -611,12 +585,8 @@ bacon.get = function(url, data, callback) {
  * @param func callback The function to send that data to.
  */
 bacon.post = function(url, data, callback) {
-	if (typeof url === 'object') {
-		url.method = 'POST';
-		return bacon.req(url);
-	} else {
-		return bacon.req('POST', url, data, callback);
-	}
+	url.method = 'POST';
+	return (typeof url === 'object') ? bacon.req(url) : bacon.req('POST', url, data, callback);
 };
 
 
@@ -636,7 +606,6 @@ bacon.html.data = function(get, set) {
 	if (typeof set === 'undefined') {
 		return (this.elements[0].dataset) ? this.elements[0].dataset[get] : null;
 	}
-
 	return this.each(function() {
 		if (!this.dataset) {
 			this.dataset = {};
@@ -837,16 +806,15 @@ bacon.enableArrayFeatures = function() {
 	Array.prototype.rand = Array.prototype.random = function(limit) {
 		if (typeof limit !== 'number') {
 			return this[Math.floor(Math.random() * this.length)];
-		} else {
-			if (limit > this.length) {
-				throw new Error('Cannot return more items than the array contains.');
-			}
-			var end = [], clone = this.slice();
-			while (end.length < limit) {
-				end = end.concat(clone.splice(Math.floor(Math.random() * clone.length), 1));
-			}
-			return end;
 		}
+		if (limit > this.length) {
+			throw new Error('Cannot return more items than the array contains.');
+		}
+		var end = [], clone = this.slice();
+		while (end.length < limit) {
+			end = end.concat(clone.splice(Math.floor(Math.random() * clone.length), 1));
+		}
+		return end;
 	};
 
 	/**
@@ -873,7 +841,7 @@ bacon.enableArrayFeatures = function() {
 	 */
 	Array.prototype.shuffle = function() {
 		var end = [], clone = this.slice();
-		while (clone.length > 0) {
+		while (clone.length) {
 			end = end.concat(clone.splice(Math.floor(Math.random() * clone.length), 1));
 		}
 		return end;
@@ -928,40 +896,27 @@ if (typeof JSON === 'undefined') {
 	JSON.parse = function(text) {
 		return eval('(' + text + ')');
 	};
-
 	JSON.stringify = function(value) {
 		 var cx = /[\u0000\u00ad\u0600-\u0604\u070f\u17b4\u17b5\u200c-\u200f\u2028-\u202f\u2060-\u206f\ufeff\ufff0-\uffff]/g,
 			escapable = /[\\\"\x00-\x1f\x7f-\x9f\u00ad\u0600-\u0604\u070f\u17b4\u17b5\u200c-\u200f\u2028-\u202f\u2060-\u206f\ufeff\ufff0-\uffff]/g,
-			meta = {
-				'\b': '\\b',
-				'\t': '\\t',
-				'\n': '\\n',
-				'\f': '\\f',
-				'\r': '\\r',
-				'"' : '\\"',
-				'\\': '\\\\'
-			};
+			meta = {'\b': '\\b', '\t': '\\t', '\n': '\\n', '\f': '\\f', '\r': '\\r', '"' : '\\"', '\\': '\\\\'};
 
 		function str(value) {
 			if (value.toJSON) {
 				return '"' + value.toJSON() + '"';
 			}
 			if (typeof value === 'string') {
-				if (escapable.test(value.valueOf())) {
-					return '"' + value.valueOf().replace(escapable, function(a) {
-						var c = meta[a];
-						return typeof c === 'string' ? c : '\\u' +  ('0000' + a.charCodeAt(0).toString(16)).slice(-4);
-					}) + '"';
-				} else {
-					return '"' + value.valueOf() + '"';
-				}
+				return '"' + value.replace(escapable, function(a) {
+					var c = meta[a];
+					return typeof c === 'string' ? c : '\\u' +  ('0000' + a.charCodeAt(0).toString(16)).slice(-4);
+				}) + '"';
 			}
 			if (typeof value === 'number') {
 				// JSON numbers must be finite
 				return isFinite(obj) ? String(value) : 'null';
 			}
 			if (typeof value === 'boolean') {
-				return value.valueOf();
+				return value;
 			}
 			if (typeof value === 'object' && !value) {
 				return 'null';
@@ -971,17 +926,11 @@ if (typeof JSON === 'undefined') {
 				for (i = 0; i < value.length; i++) {
 					partial.push(str(value[i]) || 'null');
 				}
-				if (partial.length === 0) {
-					return '[]';
-				}
 				return '[' + partial.join(',') + ']';
 			}
 			if (typeof value === 'object') {
 				for (i in value) {
 					partial.push(str(i) + ':' + str(value[i]));
-				}
-				if (partial.length === 0) {
-					return '{}';
 				}
 				return '{' + partial.join(',') + '}';
 			}
@@ -999,9 +948,9 @@ if (typeof JSON === 'undefined') {
 			return isFinite(this.valueOf()) ?
 				this.getUTCFullYear()			+ '-' +
 				f(this.getUTCMonth() + 1)	+ '-' +
-				f(this.getUTCDate())				+ 'T' +
+				f(this.getUTCDate())			+ 'T' +
 				f(this.getUTCHours())			+ ':' +
-				(this.getUTCMinutes())			+ ':' +
+				f(this.getUTCMinutes())		+ ':' +
 				f(this.getUTCSeconds())		+ 'Z' : null;
 		};
 	}
@@ -1029,35 +978,27 @@ bacon._defaultAnimTime = 400;
  * @param func cb Callback to call when fadeIn has completed (optional).
  */
 bacon.html.fadeIn = function(time, cb) {
-	if (typeof time === 'function') {
+	if (typeof time !== 'number') {
 		cb = time;
-		time = bacon._defaultAnimTime;
-	} else if (typeof time === 'undefined') {
 		time = bacon._defaultAnimTime;
 	}
 
 	var startTime = Date.now(), orig = this;
-
-	this.each(function() {
-		var interval, start = (this.style.opacity) ? this.style.opacity : '1', that = this;
-
-		if (start === '1') {
-			return;
-		}
-
-		interval = setInterval(function() {
-			that.style.opacity = ((Date.now() - startTime) * (1 - start) / time);
-			if (that.style.opacity >= 1 && (that.style.opacity = 1)) {
-				clearInterval(interval);
-			}
-		}, 4);
-	});
-
 	setTimeout(function() {
 		cb.call(orig);
 	}, time + 4);
 
-	return this;
+	return this.each(function() {
+		var interval, start = (this.style.opacity) ? this.style.opacity : '1', that = this;
+		if (start !== '1') {
+			interval = setInterval(function() {
+				that.style.opacity = ((Date.now() - startTime) * (1 - start) / time);
+				if (that.style.opacity >= 1 && (that.style.opacity = 1)) {
+					clearInterval(interval);
+				}
+			}, 4);
+		}
+	});
 };
 
 /**
@@ -1067,33 +1008,25 @@ bacon.html.fadeIn = function(time, cb) {
  * @param func cb Callback to call when fadeOut has completed (optional).
  */
 bacon.html.fadeOut = function(time, cb) {
-	if (typeof time === 'function') {
+	if (typeof time !== 'number') {
 		cb = time;
-		time = bacon._defaultAnimTime;
-	} else if (typeof time === 'undefined') {
 		time = bacon._defaultAnimTime;
 	}
 
 	var startTime = Date.now(), orig = this;
-
-	this.each(function() {
-		var interval, start = ((this.style.opacity) ? this.style.opacity : 1), that = this;
-
-		if (start === '0') {
-			return;
-		}
-
-		interval = setInterval(function() {
-			that.style.opacity = 1 - ((Date.now() - startTime) * start / time);
-			if (that.style.opacity <= 0 && !(that.style.opacity = 0)) {
-				clearInterval(interval);
-			}
-		}, 4);
-	});
-
 	setTimeout(function() {
 		cb.call(orig);
 	}, time + 4);
 
-	return this;
+	return this.each(function() {
+		var interval, start = ((this.style.opacity) ? this.style.opacity : 1), that = this;
+		if (start !== '0') {
+			interval = setInterval(function() {
+				that.style.opacity = 1 - ((Date.now() - startTime) * start / time);
+				if (that.style.opacity <= 0 && !(that.style.opacity = 0)) {
+					clearInterval(interval);
+				}
+			}, 4);
+		}
+	});
 };
