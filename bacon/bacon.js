@@ -115,13 +115,9 @@ bacon.html.each = function(callback) {
  * @param string html The HTML to set.
  */
 bacon.html.html = function(html) {
-	if (typeof html === 'undefined') {
-		return this.elements[0].innerHTML;
-	}
-	this.each(function() {
+	return (typeof html !== 'undefined') ? this.each(function() {
 		this.innerHTML = html;
-	});
-	return this;
+	}) : this.elements[0].innerHTML;
 };
 
 /**
@@ -147,9 +143,9 @@ bacon.html.text = function(text) {
  * @param string html The value to set.
  */
 bacon.html.val = bacon.html.value = function(text) {
-	return (typeof text === 'undefined') ? this.elements[0].value : this.each(function() {
+	return (typeof text !== 'undefined') ? this.each(function() {
 		this.value = text;
-	});
+	}) : this.elements[0].value;
 };
 
 /**
@@ -760,10 +756,7 @@ bacon.enableArrayFeatures = function() {
 	Array.prototype.flatten = function() {
 		for (var end = [], flat, i = 0, j; i < this.length; i++) {
 			if (this[i] instanceof Array) {
-				flat = this[i].flatten();
-				for (j = 0; j < flat.length; j++) {
-					end.push(flat[j]);
-				}
+				end = end.concat(this[i].flatten());
 			} else {
 				end.push(this[i]);
 			}
@@ -888,15 +881,14 @@ bacon.enableArrayFeatures = function() {
 	};
 
 	/**
-	 * Returns the array without all duplicate entries removed.
+	 * Returns the array with all duplicate entries removed.
 	 *
 	 * @returns array The array without the duplicates.
 	 */
 	Array.prototype.unique = function() {
 		for (var i = 0, clone = this.slice(); i < clone.length; i++) {
 			if (clone.indexOf(clone[i]) < i) {
-				clone.splice(i, 1);
-				i--;
+				clone.splice(i--, 1);
 			}
 		}
 		return clone;
