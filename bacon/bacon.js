@@ -57,8 +57,7 @@ bacon._getElementText = function(element) {
 };
 
 /**
- * Takes either an HTMLElement, BaconObj or HTML string and returns a
- * BaconObj.
+ * Takes either an HTMLElement, BaconObj or HTML string and returns a BaconObj.
  *
  * @param object html HTMLElement / BaconObj / HTML string.
  * @returns BaconObj.
