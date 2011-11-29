@@ -945,7 +945,7 @@ if (typeof JSON === 'undefined') {
 				return n < 10 ? '0' + n : n;
 			}
 
-			return isFinite(this.valueOf()) ?
+			return isFinite(this) ?
 				this.getUTCFullYear()			+ '-' +
 				f(this.getUTCMonth() + 1)	+ '-' +
 				f(this.getUTCDate())			+ 'T' +
