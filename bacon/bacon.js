@@ -969,7 +969,7 @@ if (!Array.prototype.forEach) {
  *                                    ANIMATIONS
  ****************************************************************************/
 
-bacon._defaultAnimTime = 400;
+bacon.defaultAnimTime = 400;
 
 /**
  * Fades in an element / group of elements.
