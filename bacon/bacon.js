@@ -989,7 +989,7 @@ bacon.html.fadeIn = function(time, cb) {
 	}, time + 4);
 
 	return this.each(function() {
-		var interval, start = (this.style.opacity) ? this.style.opacity : '1', that = this;
+		var interval, start = (this.style.opacity) ? this.style.opacity : '0', that = this;
 		if (start !== '1') {
 			interval = setInterval(function() {
 				that.style.opacity = ((Date.now() - startTime) * (1 - start) / time);
@@ -1020,7 +1020,7 @@ bacon.html.fadeOut = function(time, cb) {
 
 	return this.each(function() {
 		var interval, start = ((this.style.opacity) ? this.style.opacity : 1), that = this;
-		if (start !== '0') {
+		if (this.style.opacity !== '0') {
 			interval = setInterval(function() {
 				that.style.opacity = 1 - ((Date.now() - startTime) * start / time);
 				if (that.style.opacity <= 0 && !(that.style.opacity = 0)) {
