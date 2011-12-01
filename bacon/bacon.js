@@ -342,6 +342,18 @@ bacon.html.matches = function(selector) {
 	return possibles.indexOf(this.elements[0]) !== -1;
 };
 
+/**
+ * Sets or retrieves the specified CSS property of an elements.
+ *
+ * @param string get The property to get.
+ * @param string set What to set it to. If undefined, will return current value.
+ */
+bacon.html.css = function(get, set) {
+	return (typeof set !== 'undefined') ? this.each(function() {
+		this.style[get] = set;
+	}) : this.elements[0].style[get];
+};
+
 
 
 /*****************************************************************************

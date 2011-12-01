@@ -179,4 +179,14 @@ $.describe('bacon DOM tests', function() {
 		$.expect($('[name="foo"]').value()).toEqual('test');
 		$('[name="foo"]').value('bar');
 	});
+
+	$.it('should retrieve css correctly', function() {
+		$.expect($('.red', 1).css('color')).toEqual('red');
+	});
+
+	$.it('should set css correctly', function() {
+		$('.red', 1).css('color', 'blue');
+		$.expect($('.red', 1).css('color')).toEqual('blue');
+		$('.red', 1).css('color', 'red');
+	});
 });
