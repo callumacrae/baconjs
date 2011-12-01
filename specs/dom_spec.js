@@ -164,8 +164,8 @@ $.describe('bacon DOM tests', function() {
 	});
 
 	$.it('should retrieve text successfully', function() {
-		var text = bacon._toBaconObj('<div><s>w</s>or<p>ti<i>s<u></u>t</i></p></div>').text();
-		$.expect(text).toEqual('wortist');
+		var text = bacon._toBaconObj('<div><s>w</s>or<p>ti<i>s<u></u>t</i></p></div>');
+		$.expect(text.text()).toEqual('wortist');
 	});
 
 	$.it('should set text successfully', function() {
