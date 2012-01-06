@@ -872,7 +872,8 @@ bacon.enableArrayFeatures = function() {
 			if (typeof this[i] === 'number') {
 				if (min === null || this[i] < min) {
 					min = this[i];
-				} else if (max === null || this[i] > max) {
+				}
+				if (max === null || this[i] > max) {
 					max = this[i];
 				}
 			}

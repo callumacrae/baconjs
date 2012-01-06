@@ -2,11 +2,11 @@ $.describe('array prototype test', function() {
 	$.it('should not have enabled itself', function() {
 		$.expect([].included).toBeUndefined();
 	});
-	
+
 	$.it('should enable successfully', function() {
 		$.expect($.enableArrayFeatures()).toEqual(true);
 	});
-	
+
 	$.it('should use .included correctly', function() {
 		$.expect(['one', 'two', 'three'].included('one')).toEqual(true);
 		$.expect(['one', 'two', 'three'].included('four')).toEqual(false);
@@ -52,6 +52,11 @@ $.describe('array prototype test', function() {
 		$.expect(['test',-2,7,1].range()).toEqual(9);
 	});
 
+	$.it('should use .range correctly with negative numbers', function() {
+		$.expect([-3, -1].range()).toEqual(2);
+		$.expect([-1, -3].range()).toEqual(2);
+	});
+
 	$.it('should use .groupBy correctly', function() {
 		var group = [1.5, 2.3, 2.6, 3.3, 3.6].groupBy(function(num) {
 			return Math.floor(num);
@@ -83,7 +88,7 @@ $.describe('array prototype test', function() {
 		$.expect(['one', [['two'], 'three', [[[['four']]]]]].flatten()).toEqual(['one', 'two', 'three', 'four']);
 		$.expect(['one', [{}]].flatten()).toEqual(['one', {}]);
 	});
-	
+
 	var without = ['one', 'one', 'one', 'two', 'one'];
 	$.it('should use .without correctly', function() {
 		$.expect(without.without()).toEqual(without);
@@ -91,12 +96,12 @@ $.describe('array prototype test', function() {
 		$.expect(without.without('two').indexOf('two')).toEqual(-1);
 		$.expect(without.without('one').length).toEqual(1);
 	});
-	
+
 	$.it('should use .without with an array correctly', function() {
 		$.expect(without.without(['one'], true)).toEqual(['two']);
 		$.expect(without.without(['one', 'two'], true)).toEqual([]);
 	});
-	
+
 	$.it('should use .unique correctly', function() {
 		$.expect(without.unique()).toEqual(['one', 'two']);
 		$.expect(['one', 'one'].unique()).toEqual('one');
