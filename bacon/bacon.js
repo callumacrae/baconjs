@@ -43,8 +43,8 @@ bacon._escape = function(text) {
  * @param obj element The HTML element.
  */
 bacon._getElementText = function(element) {
-	var childNodes = element.childNodes, end = '', i;
-	for (i = 0; i < childNodes.length; i++) {
+	var childNodes = element.childNodes, end = '', i = 0, l = childNodes.length;
+	for (; i < l; i += 1) {
 		end += (childNodes[i] instanceof Text) ? childNodes[i].nodeValue : bacon._getElementText(childNodes[i]);
 	}
 	return end;
@@ -70,10 +70,11 @@ bacon._toBaconObj = function(html) {
  * @param int limit Limit the returned elements to this value.
  */
 bacon.html.select = function(selector, limit) {
-	var els, elements = [], i, j;
-	for (i = 0; i < this.elements.length && (typeof limit === 'undefined' || elements.length < limit); i++) {
+	var els, elements = [], i = 0, j, l = this.elements.length, m;
+	for (; i < l && (typeof limit === 'undefined' || elements.length < limit); i += 1) {
 		els = this.elements[i].querySelectorAll(selector);
-		for (j = 0; j < els.length && (typeof limit === 'undefined' || elements.length < limit); j++) {
+		m = els.length;
+		for (j = 0; j < m && (typeof limit === 'undefined' || elements.length < limit); j += 1) {
 			elements.push(els[j]);
 		}
 	}
@@ -90,7 +91,7 @@ bacon.html.select = function(selector, limit) {
  * 	"this" to access the element.
  */
 bacon.html.each = function(callback) {
-	for (var i = 0; i < this.elements.length; i++) {
+	for (var i = 0, l = this.elements.length; i < l; i += 1) {
 		callback.call(this.elements[i]);
 	}
 	return this;
@@ -174,7 +175,7 @@ bacon.html.previous = function(selector) {
  */
 bacon.html.children = function(selector) {
 	var children = this.elements[0].childNodes, final_children = [], i;
-	for (i = 0; i < children.length; i++) {
+	for (i = 0; i < children.length; i += 1) {
 		if (children[i].nodeType === 1 && (typeof selector === 'undefined' || $(children[i]).matches(selector))) {
 			final_children.push(children[i]);
 		}
@@ -207,7 +208,7 @@ bacon.html.parent = function(selector) {
  */
 bacon.html.siblings = function(selector) {
 	var siblings = this.parent().children(selector);
-	for (var i = 0; i < siblings.length; i++) {
+	for (var i = 0; i < siblings.length; i += 1) {
 		// Remove the current element (it isn't a sibling).
 		if (siblings.elements[i] === this.elements[0]) {
 			siblings.elements.splice(i, 1);
@@ -236,7 +237,7 @@ bacon.html.get = function(number) {
 bacon.html.append = function(html) {
 	html = bacon._toBaconObj(html);
 	return this.each(function() {
-		for (var i = 0; i < html.elements.length; i++) {
+		for (var i = html.elements.length; i--;) {
 			this.appendChild(html.elements[i].cloneNode(true));
 		}
 	});
@@ -263,7 +264,7 @@ bacon.html.appendTo = function(selector, limit) {
 bacon.html.prepend = function(html) {
 	html = bacon._toBaconObj(html);
 	return this.each(function() {
-		for (var i = 0; i < html.elements.length; i++) {
+		for (var i = html.elements.length; i--;) {
 			this.insertBefore(html.elements[i].cloneNode(true), this.childNodes[0]);
 		}
 	});
@@ -330,17 +331,25 @@ bacon.html.copyTo = function(selector, prepend) {
  *
  * @param string selector The selector to test.
  */
-bacon.html.matches = function(selector) {
-	if (this.elements[0].matchesSelector) {
-		return this.elements[0].matchesSelector(selector);
-	} else if (this.elements[0].webkitMatchesSelector) {
-		return this.elements[0].webkitMatchesSelector(selector);
-	} else if (this.elements[0].mozMatchesSelector) {
-		return this.elements[0].mozMatchesSelector(selector);
+bacon.html.matches = (function() {
+	if (HTMLElement.prototype.matchesSelector) {
+		return function(selector) {
+			return this.elements[0].matchesSelector(selector);
+		};
+	} else if (HTMLElement.prototype.webkitMatchesSelector) {
+		return function(selector) {
+			return this.elements[0].webkitMatchesSelector(selector);
+		};
+	} else if (HTMLElement.prototype.mozMatchesSelector) {
+		return function(selector) {
+			return this.elements[0].mozMatchesSelector(selector);
+		};
 	}
-	var possibles = this.elements[0].parentNode.querySelectorAll(selector);
-	return possibles.indexOf(this.elements[0]) !== -1;
-};
+	return function(selector) {
+		var possibles = this.elements[0].parentNode.querySelectorAll(selector);
+		return possibles.indexOf(this.elements[0]) !== -1;
+	}
+}());
 
 /**
  * Sets or retrieves the specified CSS property of an elements.
@@ -423,7 +432,7 @@ bacon.html.live = function(event, callback) {
 	if (!bacon._documentEvents[event]) {
 		bacon._documentEvents[event] = [];
 		$(document).on(event, function(e) {
-			for (var i = 0, t; i < bacon._documentEvents[event].length; i++) {
+			for (var i = bacon._documentEvents[event].length, t; i--;) {
 				t = (e.target) ? e.target : e.srcElement;
 				if ($(t).matches(bacon._documentEvents[event][i][0])) {
 					bacon._documentEvents[event][i][1].call(t, e);
@@ -446,14 +455,14 @@ bacon.html.unlive = function(event, callback) {
 	if (typeof event === 'undefined' && typeof callback === 'undefined') {
 		var i, prop;
 		for (prop in bacon._documentEvents) {
-			for (i = 0; i < bacon._documentEvents[prop].length; i++) {
+			for (i = bacon._documentEvents[prop].length; i--;) {
 				if (bacon._documentEvents[prop][i][0] === this.selector) {
 					bacon._documentEvents[prop].splice(i, 1);
 				}
 			}
 		}
 	} else if (bacon._documentEvents[event]) {
-		for (var events = bacon._documentEvents[event], i = 0; i < events.length; i++) {
+		for (var events = bacon._documentEvents[event], i = events.length; i--;) {
 			if (events[i][0] === this.selector && (typeof callback === 'undefined' || events[i][1] === callback)) {
 				events.splice(i, 1);
 			}
@@ -471,8 +480,8 @@ bacon.html.unlive = function(event, callback) {
 bacon.html.removeHandlers = bacon.html.off = function(event, callback) {
 	return this.each(function() {
 		if ($(this).data('baconId')) {
-			var data = bacon._eventData[$(this).data('baconId')], i;
-			for (i = 0; i < data.length; i++) {
+			var data = bacon._eventData[$(this).data('baconId')], i = data.length;
+			for (i; i--;) {
 				if (data[i][0] === event && (typeof callback === 'undefined' || data[i][1].callback === callback)) {
 					if (this.removeEventListener) {
 						this.removeEventListener(data[i][0], data[i][1]);
@@ -639,8 +648,8 @@ bacon.html.serialise = function(object) {
 		object = false;
 	}
 
-	var form = this.elements[0].elements, i, string = [], obj = {};
-	for (i = 0; i < form.length; i++) {
+	var form = this.elements[0].elements, i = 0, string = [], obj = {}, l = form.length;
+	for (; i < l; i += 1) {
 		if (object) {
 			obj[form[i].name] = form[i].value;
 		} else {
@@ -665,12 +674,12 @@ bacon.html.serialise = function(object) {
 bacon.querystring = bacon.qs = function(query) {
 	if (typeof query === 'object') {
 		// Convert from object to string
-		var string = [], i, j;
+		var string = [], i, j, l;
 		for (i in query) {
 			if (typeof query[i] === 'string') {
 				string.push(i + '=' + query[i]);
 			} else if (query[i] instanceof Array) {
-				for (j = 0; j < query[i].length; j++) {
+				for (j = 0, l = query[i].length; j < l; j += 1) {
 					string.push(i + '[]=' + query[i][j]);
 				}
 			} else if (typeof query[i] === 'object') {
@@ -683,7 +692,7 @@ bacon.querystring = bacon.qs = function(query) {
 	} else if (typeof query === 'string') {
 		// Convert from string to object
 		query = query.split('&');
-		for (var match, obj = {}, i = 0; i < query.length; i++) {
+		for (var match, obj = {}, i = 0, l = query.length; i < l; i += 1) {
 			if (match = /^([^\[\]]+)\[([^\[\]]+)\]=(.+)$/.exec(query[i])) {
 				if (typeof obj[match[1]] === 'undefined') {
 					obj[match[1]] = {};
@@ -745,7 +754,7 @@ bacon.enableArrayFeatures = function() {
 	 * @return array Array with all falsey values removed.
 	 */
 	Array.prototype.compact = function() {
-		for (var end = [], i = 0; i < this.length; i++) {
+		for (var end = [], i = 0, l = this.length; i < l; i += 1) {
 			if (this[i]) {
 				end.push(this[i]);
 			}
@@ -759,7 +768,7 @@ bacon.enableArrayFeatures = function() {
 	 * @returns array Flattened array.
 	 */
 	Array.prototype.flatten = function() {
-		for (var end = [], flat, i = 0, j; i < this.length; i++) {
+		for (var end = [], flat, i = 0, j, l = this.length; i < l; i += 1) {
 			if (this[i] instanceof Array) {
 				end = end.concat(this[i].flatten());
 			} else {
@@ -776,7 +785,7 @@ bacon.enableArrayFeatures = function() {
 	 * @returns object Object of the grouped array items.
 	 */
 	Array.prototype.groupBy = function(sortBy) {
-		for (var a, obj = {}, i = 0; i < this.length; i++) {
+		for (var a, obj = {}, i = 0, l = this.length; i < l; i += 1) {
 			a = sortBy(this[i]);
 			if (!obj[a]) {
 				obj[a] = [];
@@ -807,7 +816,7 @@ bacon.enableArrayFeatures = function() {
 			type = typeof this[0];
 		}
 
-		for (var i = 0, max = null; i < this.length; i++) {
+		for (var i = this.length, max = null; i--;) {
 			if (typeof this[i] === type && (max === null || this[i] > max)) {
 				max = this[i];
 			}
@@ -826,7 +835,7 @@ bacon.enableArrayFeatures = function() {
 			type = typeof this[0];
 		}
 
-		for (var i = 0, min = null; i < this.length; i++) {
+		for (var i = this.length, min = null; i--;) {
 			if (typeof this[i] === type && (min === null || this[i] < min)) {
 				min = this[i];
 			}
@@ -859,7 +868,7 @@ bacon.enableArrayFeatures = function() {
 	 * Supports only numbers.
 	 */
 	Array.prototype.range = function() {
-		for (var i = 0, min = null, max = null; i < this.length; i++) {
+		for (var i = this.length, min = null, max = null; i--;) {
 			if (typeof this[i] === 'number') {
 				if (min === null || this[i] < min) {
 					min = this[i];
@@ -890,7 +899,7 @@ bacon.enableArrayFeatures = function() {
 	 * @returns array The array without the duplicates.
 	 */
 	Array.prototype.unique = function() {
-		for (var i = 0, clone = this.slice(); i < clone.length; i++) {
+		for (var i = 0, clone = this.slice(); i < clone.length; i += 1) {
 			if (clone.indexOf(clone[i]) < i) {
 				clone.splice(i--, 1);
 			}
@@ -910,7 +919,7 @@ bacon.enableArrayFeatures = function() {
 			value = [value];
 		}
 
-		for (var clone = this.slice(), i = 0; i < value.length; i++) {
+		for (var clone = this.slice(), i = value.length; i--;) {
 			while (clone.indexOf(value[i]) !== -1) {
 				clone.splice(clone.indexOf(value[i]), 1);
 			}
@@ -958,9 +967,9 @@ if (typeof JSON === 'undefined') {
 			if (typeof value === 'object' && !value) {
 				return 'null';
 			}
-			var i, partial = [];
+			var i, l, partial = [];
 			if (value instanceof Array) {
-				for (i = 0; i < value.length; i++) {
+				for (i = 0, l = value.length; i < l; i += 1) {
 					partial.push(str(value[i]) || 'null');
 				}
 				return '[' + partial.join(',') + ']';
@@ -996,7 +1005,7 @@ if (typeof JSON === 'undefined') {
 
 if (!Array.prototype.forEach) {
 	Array.prototype.forEach = function(fn) {
-		for (var i = 0; i < this.length; i++) {
+		for (var i = 0, l = this.length; i < l; i += 1) {
 			fn.call(null, this[i], i, this);
 		}
 	};
