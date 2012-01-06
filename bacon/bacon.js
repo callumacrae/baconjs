@@ -212,7 +212,7 @@ bacon.html.siblings = function(selector) {
 		// Remove the current element (it isn't a sibling).
 		if (siblings.elements[i] === this.elements[0]) {
 			siblings.elements.splice(i, 1);
-			siblings.length--;
+			siblings.length -= 1;
 			break;
 		}
 	}
@@ -481,7 +481,7 @@ bacon.html.removeHandlers = bacon.html.off = function(event, callback) {
 	return this.each(function() {
 		if ($(this).data('baconId')) {
 			var data = bacon._eventData[$(this).data('baconId')], i = data.length;
-			for (i; i--;) {
+			for (; i--;) {
 				if (data[i][0] === event && (typeof callback === 'undefined' || data[i][1].callback === callback)) {
 					if (this.removeEventListener) {
 						this.removeEventListener(data[i][0], data[i][1]);
