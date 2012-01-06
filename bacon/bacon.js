@@ -703,6 +703,31 @@ bacon.querystring = bacon.qs = function(query) {
 };
 
 
+/**
+ * Currying helper: returns a function with one or more of the arguments already
+ * defined. Look up currying.
+ *
+ * @param function fn The function to curry.
+ * @param mixed ... The arguments to send to that function.
+ * @returns function The curried function.
+ */
+bacon.curry = function(fn) {
+	var old_args = Array.prototype.slice.call(arguments, 1);
+
+	/**
+	 * The curried function to return.
+	 *
+	 * @param mixed ... The other arguments to send to the function.
+	 * @returns mixed Returns the return value of the original function with the two
+	 * 	argument sets concated.
+	 */
+	return function() {
+		var args = old_args.concat(Array.prototype.slice.call(arguments));
+			return fn.apply(this, args);
+	}
+};
+
+
 
 
 /*****************************************************************************
