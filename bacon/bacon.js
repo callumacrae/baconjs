@@ -207,8 +207,8 @@ bacon.html.parent = function (selector) {
  * @returns BaconObj The siblings.
  */
 bacon.html.siblings = function (selector) {
-	var siblings = this.parent().children(selector);
-	for (var i = 0; i < siblings.length; i += 1) {
+	var i = 0, siblings = this.parent().children(selector);
+	for (; i < siblings.length; i += 1) {
 		// Remove the current element (it isn't a sibling).
 		if (siblings.elements[i] === this.elements[0]) {
 			siblings.elements.splice(i, 1);
@@ -237,7 +237,8 @@ bacon.html.get = function (number) {
 bacon.html.append = function (html) {
 	html = bacon._toBaconObj(html);
 	return this.each(function () {
-		for (var i = html.elements.length; i--;) {
+		var i = html.elements.length;
+		while (i--) {
 			this.appendChild(html.elements[i].cloneNode(true));
 		}
 	});
@@ -264,7 +265,8 @@ bacon.html.appendTo = function (selector, limit) {
 bacon.html.prepend = function (html) {
 	html = bacon._toBaconObj(html);
 	return this.each(function () {
-		for (var i = html.elements.length; i--;) {
+		var i = html.elements.length;
+		while (i--) {
 			this.insertBefore(html.elements[i].cloneNode(true), this.childNodes[0]);
 		}
 	});
@@ -349,7 +351,7 @@ bacon.html.matches = (function () {
 		var possibles = this.elements[0].parentNode.querySelectorAll(selector);
 		return possibles.indexOf(this.elements[0]) !== -1;
 	}
-}());
+})();
 
 /**
  * Sets or retrieves the specified CSS property of an elements.
@@ -432,7 +434,8 @@ bacon.html.live = function (event, callback) {
 	if (!bacon._documentEvents[event]) {
 		bacon._documentEvents[event] = [];
 		$(document).on(event, function (e) {
-			for (var i = bacon._documentEvents[event].length, t; i--;) {
+			var i = bacon._documentEvents[event].length, t;
+			while (i--) {
 				t = (e.target) ? e.target : e.srcElement;
 				if ($(t).matches(bacon._documentEvents[event][i][0])) {
 					bacon._documentEvents[event][i][1].call(t, e);
@@ -455,14 +458,16 @@ bacon.html.unlive = function (event, callback) {
 	if (typeof event === 'undefined' && typeof callback === 'undefined') {
 		var i, prop;
 		for (prop in bacon._documentEvents) {
-			for (i = bacon._documentEvents[prop].length; i--;) {
+			i = bacon._documentEvents[prop].length;
+			while (i--) {
 				if (bacon._documentEvents[prop][i][0] === this.selector) {
 					bacon._documentEvents[prop].splice(i, 1);
 				}
 			}
 		}
 	} else if (bacon._documentEvents[event]) {
-		for (var events = bacon._documentEvents[event], i = events.length; i--;) {
+		var events = bacon._documentEvents[event], i = events.length;
+		while (i--) {
 			if (events[i][0] === this.selector && (typeof callback === 'undefined' || events[i][1] === callback)) {
 				events.splice(i, 1);
 			}
@@ -481,7 +486,7 @@ bacon.html.removeHandlers = bacon.html.off = function (event, callback) {
 	return this.each(function () {
 		if ($(this).data('baconId')) {
 			var data = bacon._eventData[$(this).data('baconId')], i = data.length;
-			for (; i--;) {
+			while (i--) {
 				if (data[i][0] === event && (typeof callback === 'undefined' || data[i][1].callback === callback)) {
 					if (this.removeEventListener) {
 						this.removeEventListener(data[i][0], data[i][1]);
@@ -835,7 +840,8 @@ bacon.enableArrayFeatures = function () {
 			type = typeof this[0];
 		}
 
-		for (var i = this.length, min = null; i--;) {
+		var i = this.length, min = null;
+		while (i--) {
 			if (typeof this[i] === type && (min === null || this[i] < min)) {
 				min = this[i];
 			}
@@ -868,7 +874,8 @@ bacon.enableArrayFeatures = function () {
 	 * Supports only numbers.
 	 */
 	Array.prototype.range = function () {
-		for (var i = this.length, min = null, max = null; i--;) {
+		var i = this.length, min = null, max = null;
+		while (i--) {
 			if (typeof this[i] === 'number') {
 				if (min === null || this[i] < min) {
 					min = this[i];
