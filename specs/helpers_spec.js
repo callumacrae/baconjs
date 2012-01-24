@@ -38,4 +38,16 @@ $.describe('helpers tests', function() {
 		$.expect(form.bar).toEqual('fooo');
 		$.expect(form.foo).toEqual('bar');
 	});
+
+	$.it('should .curry stuff correctly', function() {
+		var add = function (a, b) {
+			return a + b;
+		};
+
+		var add2 = $.curry(add, 2);
+		var add3 = $.curry(add, 3);
+		$.expect(typeof add2).toEqual('function');
+		$.expect(add2(5)).toEqual(7);
+		$.expect(add3(2)).toEqual(5);
+	});
 });
