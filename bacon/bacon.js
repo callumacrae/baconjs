@@ -1,6 +1,6 @@
 function BaconObj() {};
 
-var $, bacon = $ = function(selector, limit) {
+var $, bacon = $ = function (selector, limit) {
 	if (selector instanceof BaconObj) {
 		console.log('debug: BaconObj passed to BaconObj.');
 		return selector;
@@ -31,7 +31,7 @@ BaconObj.prototype = bacon.html = {};
  *
  * @param string text The text to escape.
  */
-bacon._escape = function(text) {
+bacon._escape = function (text) {
 	return text.replace(/&/g, '&amp;')
 		.replace(/\</g, '&lt;').replace(/\>/g, '&gt;')
 		.replace(/'/g, '&#39;').replace(/"/g, '&quot;');
@@ -42,7 +42,7 @@ bacon._escape = function(text) {
  *
  * @param obj element The HTML element.
  */
-bacon._getElementText = function(element) {
+bacon._getElementText = function (element) {
 	var childNodes = element.childNodes, end = '', i = 0, l = childNodes.length;
 	for (; i < l; i += 1) {
 		end += (childNodes[i] instanceof Text) ? childNodes[i].nodeValue : bacon._getElementText(childNodes[i]);
@@ -56,7 +56,7 @@ bacon._getElementText = function(element) {
  * @param object html HTMLElement / BaconObj / HTML string.
  * @returns BaconObj.
  */
-bacon._toBaconObj = function(html) {
+bacon._toBaconObj = function (html) {
 	if (typeof html === 'object') {
 		return (html instanceof BaconObj) ? html : $(html.cloneNode(true));
 	}
@@ -69,7 +69,7 @@ bacon._toBaconObj = function(html) {
  * @param string selector The selector to use.
  * @param int limit Limit the returned elements to this value.
  */
-bacon.html.select = function(selector, limit) {
+bacon.html.select = function (selector, limit) {
 	var els, elements = [], i = 0, j, l = this.elements.length, m;
 	for (; i < l && (typeof limit === 'undefined' || elements.length < limit); i += 1) {
 		els = this.elements[i].querySelectorAll(selector);
@@ -90,7 +90,7 @@ bacon.html.select = function(selector, limit) {
  * @param function callback The function to be called for each element. Use
  * 	"this" to access the element.
  */
-bacon.html.each = function(callback) {
+bacon.html.each = function (callback) {
 	for (var i = 0, l = this.elements.length; i < l; i += 1) {
 		callback.call(this.elements[i]);
 	}
@@ -102,8 +102,8 @@ bacon.html.each = function(callback) {
  *
  * @param string html The HTML to set.
  */
-bacon.html.html = function(html) {
-	return (typeof html !== 'undefined') ? this.each(function() {
+bacon.html.html = function (html) {
+	return (typeof html !== 'undefined') ? this.each(function () {
 		this.innerHTML = html;
 	}) : this.elements[0].innerHTML;
 };
@@ -113,11 +113,11 @@ bacon.html.html = function(html) {
  *
  * @param string text The text to set. If not specified, will return text.
  */
-bacon.html.text = function(text) {
+bacon.html.text = function (text) {
 	if (typeof text !== 'undefined') {
 		//.each returns this
 		text = bacon._escape(bacon._escape(text));
-		return this.each(function() {
+		return this.each(function () {
 			this.innerHTML = text;
 		});
 	}
@@ -130,8 +130,8 @@ bacon.html.text = function(text) {
  *
  * @param string html The value to set.
  */
-bacon.html.val = bacon.html.value = function(text) {
-	return (typeof text !== 'undefined') ? this.each(function() {
+bacon.html.val = bacon.html.value = function (text) {
+	return (typeof text !== 'undefined') ? this.each(function () {
 		this.value = text;
 	}) : this.elements[0].value;
 };
@@ -143,7 +143,7 @@ bacon.html.val = bacon.html.value = function(text) {
  * @param string selector The selector to be used.
  * @returns BaconObj The next element.
  */
-bacon.html.next = function(selector) {
+bacon.html.next = function (selector) {
 	var next = this.elements[0].nextSibling;
 	while (next && next.nodeType !== 1 || (typeof selector !== 'undefined' && !$(next).matches(selector))) {
 		next = next.nextSibling;
@@ -158,7 +158,7 @@ bacon.html.next = function(selector) {
  * @param string selector The selector to be used.
  * @returns BaconObj The previous element.
  */
-bacon.html.previous = function(selector) {
+bacon.html.previous = function (selector) {
 	var previous = this.elements[0].previousSibling;
 	while (previous && previous.nodeType !== 1 || (typeof selector !== 'undefined' && !$(previous).matches(selector))) {
 		previous = previous.previousSibling;
@@ -173,7 +173,7 @@ bacon.html.previous = function(selector) {
  * @param string selector The selector to be used.
  * @returns BaconObj The children.
  */
-bacon.html.children = function(selector) {
+bacon.html.children = function (selector) {
 	var children = this.elements[0].childNodes, final_children = [], i;
 	for (i = 0; i < children.length; i += 1) {
 		if (children[i].nodeType === 1 && (typeof selector === 'undefined' || $(children[i]).matches(selector))) {
@@ -190,7 +190,7 @@ bacon.html.children = function(selector) {
  * @param string selector The selector to be used.
  * @returns BaconObj The parent element.
  */
-bacon.html.parent = function(selector) {
+bacon.html.parent = function (selector) {
 	var parent = this.elements[0].parentNode;
 	while (typeof selector !== 'undefined' && !$(parent).matches(selector)) {
 		parent = parent.parentNode;
@@ -206,7 +206,7 @@ bacon.html.parent = function(selector) {
  * @param string selector The selector to be used.
  * @returns BaconObj The siblings.
  */
-bacon.html.siblings = function(selector) {
+bacon.html.siblings = function (selector) {
 	var siblings = this.parent().children(selector);
 	for (var i = 0; i < siblings.length; i += 1) {
 		// Remove the current element (it isn't a sibling).
@@ -225,7 +225,7 @@ bacon.html.siblings = function(selector) {
  * @param int number The number of the element (starts from zero).
  * @returns BaconObj The element.
  */
-bacon.html.get = function(number) {
+bacon.html.get = function (number) {
 	return $(this.elements[number]);
 };
 
@@ -234,9 +234,9 @@ bacon.html.get = function(number) {
  *
  * @param object html The HTMLElement / BaconObj / HTML string to append.
  */
-bacon.html.append = function(html) {
+bacon.html.append = function (html) {
 	html = bacon._toBaconObj(html);
-	return this.each(function() {
+	return this.each(function () {
 		for (var i = html.elements.length; i--;) {
 			this.appendChild(html.elements[i].cloneNode(true));
 		}
@@ -251,7 +251,7 @@ bacon.html.append = function(html) {
  *
  * @returns BaconObj Returns the element itself, not the element it was copied to.
  */
-bacon.html.appendTo = function(selector, limit) {
+bacon.html.appendTo = function (selector, limit) {
 	$(selector, limit).append(this);
 	return this;
 };
@@ -261,9 +261,9 @@ bacon.html.appendTo = function(selector, limit) {
  *
  * @param object html The HTMLElement / BaconObj / HTML string to prepend.
  */
-bacon.html.prepend = function(html) {
+bacon.html.prepend = function (html) {
 	html = bacon._toBaconObj(html);
-	return this.each(function() {
+	return this.each(function () {
 		for (var i = html.elements.length; i--;) {
 			this.insertBefore(html.elements[i].cloneNode(true), this.childNodes[0]);
 		}
@@ -278,7 +278,7 @@ bacon.html.prepend = function(html) {
  *
  * @returns BaconObj Returns the element itself, not the element it was copied to.
  */
-bacon.html.prependTo = function(selector, limit) {
+bacon.html.prependTo = function (selector, limit) {
 	$(selector, limit).prepend(this);
 	return this;
 };
@@ -288,11 +288,11 @@ bacon.html.prependTo = function(selector, limit) {
  *
  * @param object element The selector / BaconObj etc to insert.
  */
-bacon.html.insertBefore = function(element) {
+bacon.html.insertBefore = function (element) {
 	element = bacon._toBaconObj(element);
-	return this.each(function() {
+	return this.each(function () {
 		var that = this;
-		element.each(function() {
+		element.each(function () {
 			that.parentNode.insertBefore(this.cloneNode(true), that);
 		});
 	});
@@ -304,7 +304,7 @@ bacon.html.insertBefore = function(element) {
  * @param string selector The element to move it to.
  * @param bool prepend If true, will be prepended instead of appended.
  */
-bacon.html.moveTo = function(selector, prepend) {
+bacon.html.moveTo = function (selector, prepend) {
 	var to = ((typeof selector === 'string') ? $(selector, 1) : selector).elements[0];
 	if (typeof prepend === 'undefined' || !prepend) {
 		to.appendChild(this.elements[0]);
@@ -320,7 +320,7 @@ bacon.html.moveTo = function(selector, prepend) {
  * @param string selector The element to copy it to.
  * @param bool prepend If true, will be prepended instead of appended.
  */
-bacon.html.copyTo = function(selector, prepend) {
+bacon.html.copyTo = function (selector, prepend) {
 	var to = (typeof selector === 'string') ? $(selector, 1) : selector;
 	to[(typeof prepend === 'undefined' || !prepend) ? 'append' : 'prepend'](this);
 	return this;
@@ -331,21 +331,21 @@ bacon.html.copyTo = function(selector, prepend) {
  *
  * @param string selector The selector to test.
  */
-bacon.html.matches = (function() {
+bacon.html.matches = (function () {
 	if (HTMLElement.prototype.matchesSelector) {
-		return function(selector) {
+		return function (selector) {
 			return this.elements[0].matchesSelector(selector);
 		};
 	} else if (HTMLElement.prototype.webkitMatchesSelector) {
-		return function(selector) {
+		return function (selector) {
 			return this.elements[0].webkitMatchesSelector(selector);
 		};
 	} else if (HTMLElement.prototype.mozMatchesSelector) {
-		return function(selector) {
+		return function (selector) {
 			return this.elements[0].mozMatchesSelector(selector);
 		};
 	}
-	return function(selector) {
+	return function (selector) {
 		var possibles = this.elements[0].parentNode.querySelectorAll(selector);
 		return possibles.indexOf(this.elements[0]) !== -1;
 	}
@@ -357,8 +357,8 @@ bacon.html.matches = (function() {
  * @param string get The property to get.
  * @param string set What to set it to. If undefined, will return current value.
  */
-bacon.html.css = function(get, set) {
-	return (typeof set !== 'undefined') ? this.each(function() {
+bacon.html.css = function (get, set) {
+	return (typeof set !== 'undefined') ? this.each(function () {
 		this.style[get] = set;
 	}) : this.elements[0].style[get];
 };
@@ -381,9 +381,9 @@ bacon._eventData = [];
  * 	every browser to access the element.
  * @param bool one Only trigger once? It is recommended that you use .one.
  */
-bacon.html.on = function(event, callback, one) {
-	return this.each(function() {
-		var that = this, handler = function(e) {
+bacon.html.on = function (event, callback, one) {
+	return this.each(function () {
+		var that = this, handler = function (e) {
 			if (callback.call(that, e) === false) {
 				e.stopPropagation();
 				e.preventDefault();
@@ -417,7 +417,7 @@ bacon.html.on = function(event, callback, one) {
  * @param string event The event name.
  * @param function callback The function to be called.
  */
-bacon.html.one = function(event, callback) {
+bacon.html.one = function (event, callback) {
 	return bacon.html.on.call(this, event, callback, true);
 };
 
@@ -428,10 +428,10 @@ bacon.html.one = function(event, callback) {
  * @param string event The event name.
  * @param function callback The function to be called.
  */
-bacon.html.live = function(event, callback) {
+bacon.html.live = function (event, callback) {
 	if (!bacon._documentEvents[event]) {
 		bacon._documentEvents[event] = [];
-		$(document).on(event, function(e) {
+		$(document).on(event, function (e) {
 			for (var i = bacon._documentEvents[event].length, t; i--;) {
 				t = (e.target) ? e.target : e.srcElement;
 				if ($(t).matches(bacon._documentEvents[event][i][0])) {
@@ -451,7 +451,7 @@ bacon.html.live = function(event, callback) {
  * @param string event The event name (optional, if ommitted will remove all).
  * @param function callback The event handler (optional, same as above).
  */
-bacon.html.unlive = function(event, callback) {
+bacon.html.unlive = function (event, callback) {
 	if (typeof event === 'undefined' && typeof callback === 'undefined') {
 		var i, prop;
 		for (prop in bacon._documentEvents) {
@@ -477,8 +477,8 @@ bacon.html.unlive = function(event, callback) {
  * @param string event The event name.
  * @param function callback The function specified in .on. Optional.
  */
-bacon.html.removeHandlers = bacon.html.off = function(event, callback) {
-	return this.each(function() {
+bacon.html.removeHandlers = bacon.html.off = function (event, callback) {
+	return this.each(function () {
 		if ($(this).data('baconId')) {
 			var data = bacon._eventData[$(this).data('baconId')], i = data.length;
 			for (; i--;) {
@@ -503,8 +503,8 @@ bacon.html.removeHandlers = bacon.html.off = function(event, callback) {
  *
  * @todo Add callback support to IE stuff.
  */
-bacon.html.trigger = function(event, callback) {
-	return this.each(function() {
+bacon.html.trigger = function (event, callback) {
+	return this.each(function () {
 		if (this.dispatchEvent) {
 			// Create and dispatch the event
 			var cancelled, evt = document.createEvent('UIEvents');
@@ -538,7 +538,7 @@ bacon.html.trigger = function(event, callback) {
  * @param string data The object to send (can also be a string).
  * @param func callback Function to send the data to.
  */
-bacon.req = function(method, url, data, callback) {
+bacon.req = function (method, url, data, callback) {
 	if (typeof method === 'object') {
 		url = method.url;
 		data = method.data;
@@ -566,7 +566,7 @@ bacon.req = function(method, url, data, callback) {
 		req.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
 	}
 
-	req.onreadystatechange = function() {
+	req.onreadystatechange = function () {
 		if (req.readyState === 4 && req.status === 200) {
 			req.body = req.responseText;
 			if (req.getResponseHeader('Content-type') === 'application/json') {
@@ -593,7 +593,7 @@ bacon.req = function(method, url, data, callback) {
  * @param string data The object to send (can also be a string).
  * @param func callback The function to send that data to.
  */
-bacon.get = function(url, data, callback) {
+bacon.get = function (url, data, callback) {
 	url.method = 'GET'; // Doesn't matter if it is a string, it'll be ignored
 	return (typeof url === 'object') ? bacon.req(url) : bacon.req('GET', url, data, callback);
 };
@@ -605,7 +605,7 @@ bacon.get = function(url, data, callback) {
  * @param string data The object to send (can also be a string).
  * @param func callback The function to send that data to.
  */
-bacon.post = function(url, data, callback) {
+bacon.post = function (url, data, callback) {
 	url.method = 'POST';
 	return (typeof url === 'object') ? bacon.req(url) : bacon.req('POST', url, data, callback);
 };
@@ -623,11 +623,11 @@ bacon.post = function(url, data, callback) {
  * @param string get The name of the data to store.
  * @param set The data to store. Can be any type.
  */
-bacon.html.data = function(get, set) {
+bacon.html.data = function (get, set) {
 	if (typeof set === 'undefined') {
 		return (this.elements[0].dataset) ? this.elements[0].dataset[get] : null;
 	}
-	return this.each(function() {
+	return this.each(function () {
 		if (!this.dataset) {
 			this.dataset = {};
 		}
@@ -640,7 +640,7 @@ bacon.html.data = function(get, set) {
  *
  * @param bool object If true, will return an object.
  */
-bacon.html.serialise = function(object) {
+bacon.html.serialise = function (object) {
 	if (this.elements[0].tagName !== 'FORM') {
 		throw new Error('You can only serialise forms.');
 	}
@@ -671,7 +671,7 @@ bacon.html.serialise = function(object) {
  * @param object query The object to be converted.
  * @returns string The converted querystring.
  */
-bacon.querystring = bacon.qs = function(query) {
+bacon.querystring = bacon.qs = function (query) {
 	if (typeof query === 'object') {
 		// Convert from object to string
 		var string = [], i, j, l;
@@ -720,7 +720,7 @@ bacon.querystring = bacon.qs = function(query) {
  * @param mixed ... The arguments to send to that function.
  * @returns function The curried function.
  */
-bacon.curry = function(fn) {
+bacon.curry = function (fn) {
 	var old_args = Array.prototype.slice.call(arguments, 1);
 
 	/**
@@ -730,7 +730,7 @@ bacon.curry = function(fn) {
 	 * @returns mixed Returns the return value of the original function with the two
 	 * 	argument sets concated.
 	 */
-	return function() {
+	return function () {
 		var args = old_args.concat(Array.prototype.slice.call(arguments));
 			return fn.apply(this, args);
 	}
@@ -746,14 +746,14 @@ bacon.curry = function(fn) {
 /**
  * Enables the bacon array features.
  */
-bacon.enableArrayFeatures = function() {
+bacon.enableArrayFeatures = function () {
 
 	/**
 	 * Removes all falsey values from an Array.
 	 *
 	 * @return array Array with all falsey values removed.
 	 */
-	Array.prototype.compact = function() {
+	Array.prototype.compact = function () {
 		for (var end = [], i = 0, l = this.length; i < l; i += 1) {
 			if (this[i]) {
 				end.push(this[i]);
@@ -767,7 +767,7 @@ bacon.enableArrayFeatures = function() {
 	 *
 	 * @returns array Flattened array.
 	 */
-	Array.prototype.flatten = function() {
+	Array.prototype.flatten = function () {
 		for (var end = [], flat, i = 0, j, l = this.length; i < l; i += 1) {
 			if (this[i] instanceof Array) {
 				end = end.concat(this[i].flatten());
@@ -784,7 +784,7 @@ bacon.enableArrayFeatures = function() {
 	 * @param function sortBy The function to query.
 	 * @returns object Object of the grouped array items.
 	 */
-	Array.prototype.groupBy = function(sortBy) {
+	Array.prototype.groupBy = function (sortBy) {
 		for (var a, obj = {}, i = 0, l = this.length; i < l; i += 1) {
 			a = sortBy(this[i]);
 			if (!obj[a]) {
@@ -801,7 +801,7 @@ bacon.enableArrayFeatures = function() {
 	 * @param prop The value to test.
 	 * @returns bool Whether it is included or not.
 	 */
-	Array.prototype.included = function(prop) {
+	Array.prototype.included = function (prop) {
 		return this.indexOf(prop) !== -1;
 	};
 
@@ -811,7 +811,7 @@ bacon.enableArrayFeatures = function() {
 	 *
 	 * @param string type The type wanted. If left, will default to the type of the first entry.
 	 */
-	Array.prototype.max = function(type) {
+	Array.prototype.max = function (type) {
 		if (typeof type === 'undefined') {
 			type = typeof this[0];
 		}
@@ -830,7 +830,7 @@ bacon.enableArrayFeatures = function() {
 	 *
 	 * @param string type The type wanted. If left, will default to the type of the first entry.
 	 */
-	Array.prototype.min = function(type) {
+	Array.prototype.min = function (type) {
 		if (typeof type === 'undefined') {
 			type = typeof this[0];
 		}
@@ -849,7 +849,7 @@ bacon.enableArrayFeatures = function() {
 	 * @param number limit The number of elements to return.
 	 * @returns array The items. Will not be an array if limit is not specified.
 	 */
-	Array.prototype.rand = Array.prototype.random = function(limit) {
+	Array.prototype.rand = Array.prototype.random = function (limit) {
 		if (typeof limit !== 'number') {
 			return this[Math.floor(Math.random() * this.length)];
 		}
@@ -867,7 +867,7 @@ bacon.enableArrayFeatures = function() {
 	 * Returns the difference between the minimum and maximum vales of an array.
 	 * Supports only numbers.
 	 */
-	Array.prototype.range = function() {
+	Array.prototype.range = function () {
 		for (var i = this.length, min = null, max = null; i--;) {
 			if (typeof this[i] === 'number') {
 				if (min === null || this[i] < min) {
@@ -886,7 +886,7 @@ bacon.enableArrayFeatures = function() {
 	 *
 	 * @returns array The shuffled array.
 	 */
-	Array.prototype.shuffle = function() {
+	Array.prototype.shuffle = function () {
 		var end = [], clone = this.slice();
 		while (clone.length) {
 			end = end.concat(clone.splice(Math.floor(Math.random() * clone.length), 1));
@@ -899,7 +899,7 @@ bacon.enableArrayFeatures = function() {
 	 *
 	 * @returns array The array without the duplicates.
 	 */
-	Array.prototype.unique = function() {
+	Array.prototype.unique = function () {
 		for (var i = 0, clone = this.slice(); i < clone.length; i += 1) {
 			if (clone.indexOf(clone[i]) < i) {
 				clone.splice(i--, 1);
@@ -915,7 +915,7 @@ bacon.enableArrayFeatures = function() {
 	 * @param bool array If true, will treat value as an array of values.
 	 * @returns array The array without the values.
 	 */
-	Array.prototype.without = function(value, array) {
+	Array.prototype.without = function (value, array) {
 		if (typeof array === 'undefined' || !array) {
 			value = [value];
 		}
@@ -940,10 +940,10 @@ bacon.enableArrayFeatures = function() {
 if (typeof JSON === 'undefined') {
 	JSON = {};
 
-	JSON.parse = function(text) {
+	JSON.parse = function (text) {
 		return eval('(' + text + ')');
 	};
-	JSON.stringify = function(value) {
+	JSON.stringify = function (value) {
 		 var cx = /[\u0000\u00ad\u0600-\u0604\u070f\u17b4\u17b5\u200c-\u200f\u2028-\u202f\u2060-\u206f\ufeff\ufff0-\uffff]/g,
 			escapable = /[\\\"\x00-\x1f\x7f-\x9f\u00ad\u0600-\u0604\u070f\u17b4\u17b5\u200c-\u200f\u2028-\u202f\u2060-\u206f\ufeff\ufff0-\uffff]/g,
 			meta = {'\b': '\\b', '\t': '\\t', '\n': '\\n', '\f': '\\f', '\r': '\\r', '"' : '\\"', '\\': '\\\\'};
@@ -953,7 +953,7 @@ if (typeof JSON === 'undefined') {
 				return '"' + value.toJSON() + '"';
 			}
 			if (typeof value === 'string') {
-				return '"' + value.replace(escapable, function(a) {
+				return '"' + value.replace(escapable, function (a) {
 					var c = meta[a];
 					return typeof c === 'string' ? c : '\\u' +  ('0000' + a.charCodeAt(0).toString(16)).slice(-4);
 				}) + '"';
@@ -987,7 +987,7 @@ if (typeof JSON === 'undefined') {
 	};
 
 	if (typeof Date.prototype.toJSON !== 'function') {
-		Date.prototype.toJSON = function(key) {
+		Date.prototype.toJSON = function (key) {
 			function f(n) {
 				return n < 10 ? '0' + n : n;
 			}
@@ -1005,7 +1005,7 @@ if (typeof JSON === 'undefined') {
 
 
 if (!Array.prototype.forEach) {
-	Array.prototype.forEach = function(fn) {
+	Array.prototype.forEach = function (fn) {
 		for (var i = 0, l = this.length; i < l; i += 1) {
 			fn.call(null, this[i], i, this);
 		}
@@ -1024,21 +1024,21 @@ bacon.defaultAnimTime = 400;
  * @param int time Time to fade it in over (optional).
  * @param func cb Callback to call when fadeIn has completed (optional).
  */
-bacon.html.fadeIn = function(time, cb) {
+bacon.html.fadeIn = function (time, cb) {
 	if (typeof time !== 'number') {
 		cb = time;
 		time = bacon._defaultAnimTime;
 	}
 
 	var startTime = Date.now(), orig = this;
-	setTimeout(function() {
+	setTimeout(function () {
 		cb.call(orig);
 	}, time + 4);
 
-	return this.each(function() {
+	return this.each(function () {
 		var interval, start = (this.style.opacity) ? this.style.opacity : '0', that = this;
 		if (start !== '1') {
-			interval = setInterval(function() {
+			interval = setInterval(function () {
 				that.style.opacity = ((Date.now() - startTime) * (1 - start) / time);
 				if (that.style.opacity >= 1 && (that.style.opacity = 1)) {
 					clearInterval(interval);
@@ -1054,21 +1054,21 @@ bacon.html.fadeIn = function(time, cb) {
  * @param int time Time to fade it out over (optional).
  * @param func cb Callback to call when fadeOut has completed (optional).
  */
-bacon.html.fadeOut = function(time, cb) {
+bacon.html.fadeOut = function (time, cb) {
 	if (typeof time !== 'number') {
 		cb = time;
 		time = bacon._defaultAnimTime;
 	}
 
 	var startTime = Date.now(), orig = this;
-	setTimeout(function() {
+	setTimeout(function () {
 		cb.call(orig);
 	}, time + 4);
 
-	return this.each(function() {
+	return this.each(function () {
 		var interval, start = ((this.style.opacity) ? this.style.opacity : 1), that = this;
 		if (this.style.opacity !== '0') {
-			interval = setInterval(function() {
+			interval = setInterval(function () {
 				that.style.opacity = 1 - ((Date.now() - startTime) * start / time);
 				if (that.style.opacity <= 0 && !(that.style.opacity = 0)) {
 					clearInterval(interval);

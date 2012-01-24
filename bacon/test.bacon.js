@@ -4,27 +4,27 @@ bacon._asyncTestTimeout = 400;
 var url = window.location.search.split('=');
 url = (url.length > 1) ? url[1].replace(/%20/g, ' ') : false;
 
-bacon.describe = function(desc, fn) {
+bacon.describe = function (desc, fn) {
 	if (!url || url === desc) {
 		bacon._testData.push([desc, fn]);
 	}
 };
 
-bacon.it = function(desc, fn, async) {
+bacon.it = function (desc, fn, async) {
 	if (typeof async === 'undefined') {
 		async = false;
 	}
 	bacon._currentTestData.push([desc, fn, async]);
 };
 
-bacon.expect = function(input) {
+bacon.expect = function (input) {
 	return new BaconTest(input);
 };
 
-bacon.runTests = function(output_div) {
+bacon.runTests = function (output_div) {
 	bacon._testResults = [];
 	var i = -1, j, interval2, contin = true, contin2 = true;
-	var interval = setInterval(function() {
+	var interval = setInterval(function () {
 		if (!contin) {
 			return;
 		}
@@ -59,7 +59,7 @@ bacon.runTests = function(output_div) {
 			}
 			html += '<div class="testgroup"><h2>' + lastTestDesc + '</h2>' + lastDiv + '</div>';
 			$(output_div).html(html);
-			$('.testgroup h2').on('click', function() {
+			$('.testgroup h2').on('click', function () {
 				window.location = '?test=' + this.innerHTML.replace(/ /g, '%20');
 			});
 			return;
@@ -72,7 +72,7 @@ bacon.runTests = function(output_div) {
 
 		contin = false;
 
-		interval2 = setInterval(function() {
+		interval2 = setInterval(function () {
 			if (!contin2) {
 				return;
 			}
@@ -89,14 +89,14 @@ bacon.runTests = function(output_div) {
 			if (bacon._currentTestData[j][2]) {
 				contin2 = false;
 				var time = bacon._currentTestData[j][2];
-				var time2 = setTimeout(function() {
+				var time2 = setTimeout(function () {
 					bacon._currentTest.push('Timeout');
 					contin2 = true;
 				}, typeof time === 'number' ? time : bacon._asyncTestTimeout);
 			}
 
 			try {
-				bacon._currentTestData[j][1].call(null, function() {
+				bacon._currentTestData[j][1].call(null, function () {
 					clearInterval(time2);
 					contin2 = true;
 				});
@@ -123,7 +123,7 @@ function BaconTest(input) {
 	this.input = input;
 }
 
-BaconTest.prototype._compare = function(input, value) {
+BaconTest.prototype._compare = function (input, value) {
 	var pass = false;
 	if (typeof value === 'string' || typeof value === 'number' || typeof value === 'boolean') {
 		return (input == value);
@@ -150,29 +150,29 @@ BaconTest.prototype._compare = function(input, value) {
 	return false;
 };
 
-BaconTest.prototype.toEqual = function(value) {
+BaconTest.prototype.toEqual = function (value) {
 	var new_value = BaconTest.prototype._compare(this.input, value);
 	value = new_value ? true : 'Expected ' + this.input + ' to equal ' + value;
 	bacon._currentTest.push(value);
 };
 
-BaconTest.prototype.toNotEqual = function(value) {
+BaconTest.prototype.toNotEqual = function (value) {
 	var new_value = !BaconTest.prototype._compare(this.input, value);
 	value = new_value ? true : 'Expected ' + this.input + ' to not equal ' + value;
 	bacon._currentTest.push(value);
 };
 
-BaconTest.prototype.toBe = function(value) {
+BaconTest.prototype.toBe = function (value) {
 	value = (this.input === value) ? true : 'Expected ' + this.input + ' to be ' + value + '.';
 	bacon._currentTest.push(value);
 };
 
-BaconTest.prototype.toNotBe = function(value) {
+BaconTest.prototype.toNotBe = function (value) {
 	value = (this.input === value) ? 'Expected ' + this.input + ' to not be ' + value + '.' : true;
 	bacon._currentTest.push(value);
 };
 
-BaconTest.prototype.toMatch = function(value) {
+BaconTest.prototype.toMatch = function (value) {
 	if (!(value instanceof RegExp)) {
 		value = new RegExp(value);
 	}
@@ -181,7 +181,7 @@ BaconTest.prototype.toMatch = function(value) {
 	bacon._currentTest.push(value);
 };
 
-BaconTest.prototype.toNotMatch = function(value) {
+BaconTest.prototype.toNotMatch = function (value) {
 	if (!(value instanceof RegExp)) {
 		value = new RegExp(value);
 	}
@@ -190,47 +190,47 @@ BaconTest.prototype.toNotMatch = function(value) {
 	bacon._currentTest.push(value);
 };
 
-BaconTest.prototype.toContain = function(value) {
+BaconTest.prototype.toContain = function (value) {
 	value = (this.input.indexOf(value) < 0) ? 'Expected ' + this.input + ' to contain ' + value + '.' : true;
 	bacon._currentTest.push(value);
 };
 
-BaconTest.prototype.toNotContain = function(value) {
+BaconTest.prototype.toNotContain = function (value) {
 	value = (this.input.indexOf(value) < 0) ? true : 'Expected ' + this.input + ' to not contain ' + value + '.';
 	bacon._currentTest.push(value);
 };
 
-BaconTest.prototype.toBeLessThan = function(value) {
+BaconTest.prototype.toBeLessThan = function (value) {
 	value = (this.input < value) ? true : 'Expected ' + this.input + ' to be less than ' + value + '.';
 	bacon._currentTest.push(value);
 };
 
-BaconTest.prototype.toBeGreaterThan = function(value) {
+BaconTest.prototype.toBeGreaterThan = function (value) {
 	value = (this.input > value) ? true : 'Expected ' + this.input + ' to be less than ' + value + '.';
 	bacon._currentTest.push(value);
 };
 
-BaconTest.prototype.toBeDefined = function() {
+BaconTest.prototype.toBeDefined = function () {
 	bacon._currentTest.push((this.input === undefined) ? 'Expected var to be defined' : true);
 };
 
-BaconTest.prototype.toBeUndefined = function() {
+BaconTest.prototype.toBeUndefined = function () {
 	bacon._currentTest.push((this.input === undefined) ? true : 'Expected var to be undefined');
 };
 
-BaconTest.prototype.toBeNull = function() {
+BaconTest.prototype.toBeNull = function () {
 	bacon._currentTest.push((this.input === null) ? true : 'Expected var to be null');
 };
 
-BaconTest.prototype.toBeTruthy = function() {
+BaconTest.prototype.toBeTruthy = function () {
 	bacon._currentTest.push((this.input) ? true : 'Expected ' + this.input + ' to be truthy');
 };
 
-BaconTest.prototype.toBeFalsy = function() {
+BaconTest.prototype.toBeFalsy = function () {
 	bacon._currentTest.push((this.input) ? 'Expected ' + this.input + ' to be falsy' : true);
 };
 
-BaconTest.prototype.toThrow = function(type) {
+BaconTest.prototype.toThrow = function (type) {
 	bacon._testErrorType = type;
 	this.input.call();
 };
