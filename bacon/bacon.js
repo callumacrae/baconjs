@@ -7,9 +7,12 @@ var $, bacon = $ = function (selector, limit) {
 	}
 
 	var elements = new BaconObj();
-	if (typeof selector === 'object') {
+	if (typeof selector === 'object' && selector !== null) {
 		elements.elements = (selector instanceof Array) ? selector : [selector];
 		elements.length = elements.elements.length;
+	} else if (selector === null) {
+		elements.elements = [];
+		elements.length = 0;
 	} else {
 		elements.selector = selector;
 		elements.elements = [document];
@@ -145,7 +148,7 @@ bacon.html.val = bacon.html.value = function (text) {
  */
 bacon.html.next = function (selector) {
 	var next = this.elements[0].nextSibling;
-	while (next && next.nodeType !== 1 || (typeof selector !== 'undefined' && !$(next).matches(selector))) {
+	while (next && (next.nodeType !== 1 || (typeof selector !== 'undefined' && !$(next).matches(selector)))) {
 		next = next.nextSibling;
 	}
 	return $(next);
@@ -160,7 +163,7 @@ bacon.html.next = function (selector) {
  */
 bacon.html.previous = function (selector) {
 	var previous = this.elements[0].previousSibling;
-	while (previous && previous.nodeType !== 1 || (typeof selector !== 'undefined' && !$(previous).matches(selector))) {
+	while (previous && (previous.nodeType !== 1 || (typeof selector !== 'undefined' && !$(previous).matches(selector)))) {
 		previous = previous.previousSibling;
 	}
 	return $(previous);
