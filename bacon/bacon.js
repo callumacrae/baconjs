@@ -1,4 +1,8 @@
-function BaconObj() {};
+function BaconObj() {
+	this.elements = [];
+	this.length = 0;
+	this.selector = '';
+}
 
 var $, bacon = $ = function (selector, limit) {
 	if (selector instanceof BaconObj) {
@@ -10,10 +14,7 @@ var $, bacon = $ = function (selector, limit) {
 	if (typeof selector === 'object' && selector !== null) {
 		elements.elements = (selector instanceof Array) ? selector : [selector];
 		elements.length = elements.elements.length;
-	} else if (selector === null) {
-		elements.elements = [];
-		elements.length = 0;
-	} else {
+	} else if (typeof selector !== null) {
 		elements.selector = selector;
 		elements.elements = [document];
 		elements.select(selector, limit);
