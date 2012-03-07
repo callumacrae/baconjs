@@ -1092,7 +1092,7 @@ if (!Array.prototype.isArray) {
  *                                    ANIMATIONS
  ****************************************************************************/
 
-bacon.defaultAnimTime = 400;
+bacon._defaultAnimTime = 400;
 
 /**
  * Fades in an element / group of elements.
@@ -1107,16 +1107,19 @@ bacon.html.fadeIn = function (time, cb) {
 	}
 
 	var startTime = Date.now(), orig = this;
-	setTimeout(function () {
-		cb.call(orig);
-	}, time + 4);
+	if (typeof cb === 'function') {
+		setTimeout(function () {
+			cb.call(orig);
+		}, time + 4);
+	}
 
 	return this.each(function () {
-		var interval, start = (this.style.opacity) ? this.style.opacity : '0', that = this;
+		var interval, start = (this.style.opacity || '0'), that = this;
 		if (start !== '1') {
 			interval = setInterval(function () {
 				that.style.opacity = ((Date.now() - startTime) * (1 - start) / time);
-				if (that.style.opacity >= 1 && (that.style.opacity = 1)) {
+				if (that.style.opacity >= 1) {
+					that.style.opacity = 1;
 					clearInterval(interval);
 				}
 			}, 4);
@@ -1137,16 +1140,19 @@ bacon.html.fadeOut = function (time, cb) {
 	}
 
 	var startTime = Date.now(), orig = this;
-	setTimeout(function () {
-		cb.call(orig);
-	}, time + 4);
+	if (typeof cb === 'function') {
+		setTimeout(function () {
+			cb.call(orig);
+		}, time + 4);
+	}
 
 	return this.each(function () {
-		var interval, start = ((this.style.opacity) ? this.style.opacity : 1), that = this;
+		var interval, start = (this.style.opacity || 1), that = this;
 		if (this.style.opacity !== '0') {
 			interval = setInterval(function () {
 				that.style.opacity = 1 - ((Date.now() - startTime) * start / time);
-				if (that.style.opacity <= 0 && !(that.style.opacity = 0)) {
+				if (that.style.opacity <= 0) {
+					that.style.opacity = 0;
 					clearInterval(interval);
 				}
 			}, 4);
