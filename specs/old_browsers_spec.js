@@ -8,6 +8,7 @@ $.describe('Old browser tests', function () {
 	$.it('should add JSON.stringify correctly', function () {
 		$.expect(bacon.JSON.stringify(true)).toEqual('true');
 		$.expect(bacon.JSON.stringify(4)).toEqual('4');
+		$.expect(bacon.JSON.stringify(-4)).toEqual('-4');
 		$.expect(bacon.JSON.stringify('true')).toEqual('"true"');
 		$.expect(bacon.JSON.stringify('tru"e')).toEqual('"tru\\"e"');
 		$.expect(bacon.JSON.stringify({dsa: String.fromCharCode(0)})).toEqual('{"dsa":"\\u0000"}');
