@@ -948,127 +948,129 @@ bacon.enableArrayFeatures = function () {
  *                                 OLD BROWSERS
  ****************************************************************************/
 
+bacon.JSON = {};
+
+bacon.JSON.parse = function (text) {
+	/**
+	 * Parses a JSON string and returns the result.
+	 *
+	 * @param string value The JSON string.
+	 * @returns mixed The result.
+	 */
+	var str = function (value) {
+		var i, info, end;
+		value = value.trim();
+
+		// number
+		if (!isNaN(Number(value))) {
+			return Number(value);
+		}
+
+		// string
+		if (info = /^"([^"]+)"$/.exec(value)) {
+			// todo: unescape stuff
+			return info[1];
+		}
+
+		// boolean
+		if (value === 'true' || value === 'false') {
+			return (value === 'true');
+		}
+
+		// array
+		if (info = /^\[(.+)\]$/.exec(value)) {
+			// todo: ignore commas in strings
+			info = info[1].split(',');
+			end = [];
+			for (i = 0; i < info.length; i++) {
+				end.push(str(info[i]));
+			}
+			return end;
+		}
+
+		// object
+		if (info = /^{(.+)}$/.exec(value)) {
+			// todo: ignore commas in strings
+			info = info[1].split(',');
+			end = {};
+			for (i = 0; i < info.length; i++) {
+				// todo: ignore colons in strings
+				info[i] = info[i].split(':');
+				end[str(info[i][0])] = str(info[i][1]);
+			}
+			return end;
+		}
+	};
+	return str(text);
+};
+
+bacon.JSON.stringify = function (value) {
+	 var cx = /[\u0000\u00ad\u0600-\u0604\u070f\u17b4\u17b5\u200c-\u200f\u2028-\u202f\u2060-\u206f\ufeff\ufff0-\uffff]/g,
+		escapable = /[\\\"\x00-\x1f\x7f-\x9f\u00ad\u0600-\u0604\u070f\u17b4\u17b5\u200c-\u200f\u2028-\u202f\u2060-\u206f\ufeff\ufff0-\uffff]/g,
+		meta = {'\b': '\\b', '\t': '\\t', '\n': '\\n', '\f': '\\f', '\r': '\\r', '"' : '\\"', '\\': '\\\\'};
+
+	/**
+	 * Returns a string representation of a variable.
+	 *
+	 * @param mixed value The variable to stringify.
+	 * @returns string JSON string of the value.
+	 */
+	var str = function (value) {
+		if (value.toJSON) {
+			return '"' + value.toJSON() + '"';
+		}
+		if (typeof value === 'string') {
+			return '"' + value.replace(escapable, function (a) {
+				var c = meta[a];
+				return typeof c === 'string' ? c : '\\u' +  ('0000' + a.charCodeAt(0).toString(16)).slice(-4);
+			}) + '"';
+		}
+		if (typeof value === 'number') {
+			// JSON numbers must be finite
+			return isFinite(obj) ? String(value) : 'null';
+		}
+		if (typeof value === 'boolean') {
+			return value;
+		}
+		if (typeof value === 'object' && !value) {
+			return 'null';
+		}
+		var i, l, partial = [];
+		if (value instanceof Array) {
+			for (i = 0, l = value.length; i < l; i += 1) {
+				partial.push(str(value[i]) || 'null');
+			}
+			return '[' + partial.join(',') + ']';
+		}
+		if (typeof value === 'object') {
+			for (i in value) {
+				partial.push(str(i) + ':' + str(value[i]));
+			}
+			return '{' + partial.join(',') + '}';
+		}
+		throw new TypeError('No JSON representation for this object');
+	};
+	return str(value);
+};
+
 if (typeof JSON === 'undefined') {
-	JSON = {};
+	window.JSON = bacon.JSON;
+}
 
-	JSON.parse = function (text) {
-		/**
-		 * Parses a JSON string and returns the result.
-		 *
-		 * @param string value The JSON string.
-		 * @returns mixed The result.
-		 */
-		var str = function (value) {
-			var i, info, end;
-			value = value.trim();
+if (typeof Date.prototype.toJSON !== 'function') {
+	Date.prototype.toJSON = function (key) {
+		function f(n) {
+			return n < 10 ? '0' + n : n;
+		}
 
-			// number
-			if (!isNaN(Number(value))) {
-				return Number(value);
-			}
-
-			// string
-			if (info = /^"([^"]+)"$/.exec(value)) {
-				// todo: unescape stuff
-				return info[1];
-			}
-
-			// boolean
-			if (value === 'true' || value === 'false') {
-				return (value === 'true');
-			}
-
-			// array
-			if (info = /^\[(.+)\]$/.exec(value)) {
-				// todo: ignore commas in strings
-				info = info[1].split(',');
-				end = [];
-				for (i = 0; i < info.length; i++) {
-					end.push(str(info[i]));
-				}
-				return end;
-			}
-
-			// object
-			if (info = /^{(.+)}$/.exec(value)) {
-				// todo: ignore commas in strings
-				info = info[1].split(',');
-				end = {};
-				for (i = 0; i < info.length; i++) {
-					// todo: ignore colons in strings
-					info[i] = info[i].split(':');
-					end[str(info[i][0])] = str(info[i][1]);
-				}
-				return end;
-			}
-		};
-		return str(text);
+		return isFinite(this) ?
+			this.getUTCFullYear()			+ '-' +
+			f(this.getUTCMonth() + 1)	+ '-' +
+			f(this.getUTCDate())			+ 'T' +
+			f(this.getUTCHours())			+ ':' +
+			f(this.getUTCMinutes())		+ ':' +
+			f(this.getUTCSeconds())		+ 'Z' : null;
 	};
-
-	JSON.stringify = function (value) {
-		 var cx = /[\u0000\u00ad\u0600-\u0604\u070f\u17b4\u17b5\u200c-\u200f\u2028-\u202f\u2060-\u206f\ufeff\ufff0-\uffff]/g,
-			escapable = /[\\\"\x00-\x1f\x7f-\x9f\u00ad\u0600-\u0604\u070f\u17b4\u17b5\u200c-\u200f\u2028-\u202f\u2060-\u206f\ufeff\ufff0-\uffff]/g,
-			meta = {'\b': '\\b', '\t': '\\t', '\n': '\\n', '\f': '\\f', '\r': '\\r', '"' : '\\"', '\\': '\\\\'};
-
-		/**
-		 * Returns a string representation of a variable.
-		 *
-		 * @param mixed value The variable to stringify.
-		 * @returns string JSON string of the value.
-		 */
-		var str = function (value) {
-			if (value.toJSON) {
-				return '"' + value.toJSON() + '"';
-			}
-			if (typeof value === 'string') {
-				return '"' + value.replace(escapable, function (a) {
-					var c = meta[a];
-					return typeof c === 'string' ? c : '\\u' +  ('0000' + a.charCodeAt(0).toString(16)).slice(-4);
-				}) + '"';
-			}
-			if (typeof value === 'number') {
-				// JSON numbers must be finite
-				return isFinite(obj) ? String(value) : 'null';
-			}
-			if (typeof value === 'boolean') {
-				return value;
-			}
-			if (typeof value === 'object' && !value) {
-				return 'null';
-			}
-			var i, l, partial = [];
-			if (value instanceof Array) {
-				for (i = 0, l = value.length; i < l; i += 1) {
-					partial.push(str(value[i]) || 'null');
-				}
-				return '[' + partial.join(',') + ']';
-			}
-			if (typeof value === 'object') {
-				for (i in value) {
-					partial.push(str(i) + ':' + str(value[i]));
-				}
-				return '{' + partial.join(',') + '}';
-			}
-			throw new TypeError('No JSON representation for this object');
-		};
-		return str(value);
-	};
-
-	if (typeof Date.prototype.toJSON !== 'function') {
-		Date.prototype.toJSON = function (key) {
-			function f(n) {
-				return n < 10 ? '0' + n : n;
-			}
-
-			return isFinite(this) ?
-				this.getUTCFullYear()			+ '-' +
-				f(this.getUTCMonth() + 1)	+ '-' +
-				f(this.getUTCDate())			+ 'T' +
-				f(this.getUTCHours())			+ ':' +
-				f(this.getUTCMinutes())		+ ':' +
-				f(this.getUTCSeconds())		+ 'Z' : null;
-		};
-	}
 }
 
 
