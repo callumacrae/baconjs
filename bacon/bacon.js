@@ -990,7 +990,7 @@ bacon.JSON.parse = function (text) {
 
 		// object
 		if (info = /^{(.+)}$/.exec(value)) {
-			// todo: ignore commas in strings
+			// todo: ignore commas in strings and arrays
 			info = info[1].split(',');
 			end = {};
 			for (i = 0; i < info.length; i++) {
