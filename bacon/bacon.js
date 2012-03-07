@@ -1027,10 +1027,10 @@ bacon.JSON.stringify = function (value) {
 		}
 		if (typeof value === 'number') {
 			// JSON numbers must be finite
-			return isFinite(obj) ? String(value) : 'null';
+			return isFinite(value) ? String(value) : 'null';
 		}
 		if (typeof value === 'boolean') {
-			return value;
+			return value.toString();
 		}
 		if (typeof value === 'object' && !value) {
 			return 'null';
