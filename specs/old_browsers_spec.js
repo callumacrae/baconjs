@@ -17,6 +17,11 @@ $.describe('Old browser tests', function () {
 		$.expect(bacon.JSON.stringify({foo: ['o"ne', 4]})).toEqual('{"foo":["o\\"ne",4]}');
 	});
 
+	$.it('should have added Date.toJSON correctly', function () {
+		var d = '2012-03-07T08:53:36.699Z';
+		$.expect(new Date(d).toJSON()).toEqual(d);
+	});
+
 	$.it('should have added Array.forEach correctly', function (done) {
 		var ary = [10, 9, 8];
 		ary.forEach(function (value, index, array) {
