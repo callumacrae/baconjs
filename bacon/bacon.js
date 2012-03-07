@@ -1023,6 +1023,12 @@ if (!Array.prototype.forEach) {
 	};
 }
 
+if (!Array.prototype.isArray) {
+	Array.prototype.isArray = function (ary) {
+		return (typeof ary === 'object' && ary instanceof Array);
+	};
+}
+
 /*****************************************************************************
  *                                    ANIMATIONS
  ****************************************************************************/
