@@ -952,14 +952,71 @@ if (typeof JSON === 'undefined') {
 	JSON = {};
 
 	JSON.parse = function (text) {
-		return eval('(' + text + ')');
+		/**
+		 * Parses a JSON string and returns the result.
+		 *
+		 * @param string value The JSON string.
+		 * @returns mixed The result.
+		 */
+		var str = function (value) {
+			var i, info, end;
+			value = value.trim();
+
+			// number
+			if (!isNaN(Number(value))) {
+				return Number(value);
+			}
+
+			// string
+			if (info = /^"([^"]+)"$/.exec(value)) {
+				// todo: unescape stuff
+				return info[1];
+			}
+
+			// boolean
+			if (value === 'true' || value === 'false') {
+				return (value === 'true');
+			}
+
+			// array
+			if (info = /^\[(.+)\]$/.exec(value)) {
+				// todo: ignore commas in strings
+				info = info[1].split(',');
+				end = [];
+				for (i = 0; i < info.length; i++) {
+					end.push(str(info[i]));
+				}
+				return end;
+			}
+
+			// object
+			if (info = /^{(.+)}$/.exec(value)) {
+				// todo: ignore commas in strings
+				info = info[1].split(',');
+				end = {};
+				for (i = 0; i < info.length; i++) {
+					// todo: ignore colons in strings
+					info[i] = info[i].split(':');
+					end[str(info[i][0])] = str(info[i][1]);
+				}
+				return end;
+			}
+		};
+		return str(text);
 	};
+
 	JSON.stringify = function (value) {
 		 var cx = /[\u0000\u00ad\u0600-\u0604\u070f\u17b4\u17b5\u200c-\u200f\u2028-\u202f\u2060-\u206f\ufeff\ufff0-\uffff]/g,
 			escapable = /[\\\"\x00-\x1f\x7f-\x9f\u00ad\u0600-\u0604\u070f\u17b4\u17b5\u200c-\u200f\u2028-\u202f\u2060-\u206f\ufeff\ufff0-\uffff]/g,
 			meta = {'\b': '\\b', '\t': '\\t', '\n': '\\n', '\f': '\\f', '\r': '\\r', '"' : '\\"', '\\': '\\\\'};
 
-		function str(value) {
+		/**
+		 * Returns a string representation of a variable.
+		 *
+		 * @param mixed value The variable to stringify.
+		 * @returns string JSON string of the value.
+		 */
+		var str = function (value) {
 			if (value.toJSON) {
 				return '"' + value.toJSON() + '"';
 			}
@@ -993,7 +1050,7 @@ if (typeof JSON === 'undefined') {
 				return '{' + partial.join(',') + '}';
 			}
 			throw new TypeError('No JSON representation for this object');
-		}
+		};
 		return str(value);
 	};
 
