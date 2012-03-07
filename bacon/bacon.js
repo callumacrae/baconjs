@@ -353,7 +353,7 @@ bacon.html.matches = (function () {
 	}
 	return function (selector) {
 		var possibles = this.elements[0].parentNode.querySelectorAll(selector);
-		return possibles.indexOf(this.elements[0]) !== -1;
+		return Array.prototype.indexOf.call(possibles, this.elements[0]) !== -1;
 	}
 })();
 
