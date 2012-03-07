@@ -681,13 +681,13 @@ bacon.html.serialise = function (object) {
  * @returns string The converted querystring.
  */
 bacon.querystring = bacon.qs = function (query) {
+	var string = [], i, j, l;
 	if (typeof query === 'object') {
 		// Convert from object to string
-		var string = [], i, j, l;
 		for (i in query) {
 			if (typeof query[i] === 'string') {
 				string.push(i + '=' + query[i]);
-			} else if (query[i] instanceof Array) {
+			} else if (Array.isArray(query[i])) {
 				for (j = 0, l = query[i].length; j < l; j += 1) {
 					string.push(i + '[]=' + query[i][j]);
 				}
@@ -741,7 +741,7 @@ bacon.curry = function (fn) {
 	 */
 	return function () {
 		var args = old_args.concat(Array.prototype.slice.call(arguments));
-			return fn.apply(this, args);
+		return fn.apply(this, args);
 	}
 };
 
