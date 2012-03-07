@@ -27,4 +27,10 @@ $.describe('Old browser tests', function () {
 			}
 		});
 	}, true);
+
+	$.it('should have added Array.isArray correctly', function () {
+		$.expect(Array.isArray).toBeDefined();
+		$.expect(Array.isArray('')).toBeFalsy();
+		$.expect(Array.isArray([])).toBeTruthy();
+	});
 });
