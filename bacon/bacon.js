@@ -1159,3 +1159,19 @@ bacon.html.fadeOut = function (time, cb) {
 		}
 	});
 };
+
+/**
+ * Toggles the fade on an element - if it is visible, fade it out, and if it isn't, fade it
+ * in. If opacity is 0.5, it is faded out.
+ *
+ * @param int time Time to fade it out over (optional).
+ * @param func cb Callback to call when fade has completed (optional).
+ */
+bacon.html.toggleFade = function (time, cb) {
+	return this.each(function () {
+		if (!this.style.opacity) {
+			this.style.opacity = 1;
+		}
+		bacon.html['fade' + ((this.style.opacity < 0.5) ? 'In' : 'Out')].apply($(this), arguments);
+	});
+}
